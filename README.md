@@ -15,7 +15,7 @@
 
 ## Требования
 
-- [Claude Code](https://claude.ai/code) с доступом к `gateway-ai.raiffeisen.ru`
+- [Claude Code](https://claude.ai/code)
 
 ---
 
