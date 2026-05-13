@@ -1,8 +1,8 @@
 # PM Copilot — Мастер-план развития
 
-> Версия: v4.18 (Sprint 26: Launch Readiness)
-> Последнее обновление: 2026-05-12
-> Текущий статус: Sprint 26 завершён
+> Версия: v4.21 (Sprint 29: Collaboration Lite)
+> Последнее обновление: 2026-05-13
+> Текущий статус: Sprint 29 завершён, Sprint 30 — следующий
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 
 ---
@@ -29,88 +29,112 @@
 | Sprint 24 | v4.16 | Insight Management — управление инсайтами | ✅ |
 | Sprint 25 | v4.17 | ProductState Lifecycle + Memory Layers | ✅ |
 | Sprint 26 | v4.18 | Launch Readiness — проверка готовности к запуску | ✅ |
+| Sprint 28 | v4.20 | Multi-Initiative Support — параллельные инициативы | ✅ |
+| Sprint 29 | v4.21 | Collaboration Lite — Review Request + Feedback Integration | ✅ |
 
 ---
 
-## Запланированные спринты (27-38)
+---
 
-### Sprint 26: Launch Readiness [v4.18] ✅ ЗАВЕРШЁН
+## Запланированные спринты (29-37)
 
-**Приоритет**: P2
-**Проблема**: Нет явной проверки готовности к запуску. PM может перейти к launch, не проверив критерии — коммуникации не отправлены, ганарды не подтверждены, риски не оценены.
-
-**Что сделали**:
-1. **Launch Readiness Checklist**: Автоматический чеклист перед переходом comms → launch. Проверяет: ПРД approved, коммуникации отправлены, ганарды подтверждены, откаты определены, метрики baseline зафиксированы.
-2. **Readiness Score**: 0-100% на основе чеклиста. <80% — Copilot предупреждает, <60% — рекомендует вернуться.
-3. **Go/No-Go Frame**: Явный фреймворк принятия решения о запуске на основе readiness score + вероятностной оценки (интеграция с TIB).
-4. **Pre-launch Snapshot**: Автоматическое сохранение среза ProductState перед launch для сравнения в post-launch.
-
-**Артефакты**:
-- Обновлённый фасад (Launch Readiness секция) ✅
-- Обновлённый comms sub-skill (интеграция с readiness) ✅
-- Обновлённый product-state reference (launch_readiness, pre_launch_snapshot поля) ✅
-- Обновлённые тесты (T1-launch-readiness рубрика, 4 теста) ✅
+> **Структура бэклога**: 3 эпика + Icebox. Каждая фича оценивается по вижну: «Помогает ли PM быстрее принять решение от инсайта до ПРД?»
 
 ---
 
-### Sprint 27: ~~Decision Quality Metrics [v4.19]~~ ⏭️ SKIPPED
+## Эпик 1: Продуктовая ценность — «Copilot, который принимает решения»
 
-**Статус**: Пропущен 2026-05-12. Задача перенесена в Sprint 39.
-**Причина**: Фича требует накопленного Decision Log. На этапе первичного adoption у PM нет решений с `actual_outcome` — Quality Score будет пустым. Возвращаемся после Sprint 38 когда PM накопят реальные данные.
-
----
-
-### Sprint 28: Multi-Initiative Support [v4.20] ✅ ЗАВЕРШЁН
-
-**Приоритет**: P2
-**Проблема**: Один ProductState = одна инициатива. PM в банке ведёт 3-5 инициатив параллельно. Приходится создавать отдельные сессии, контекст не переносится.
-
-**Что делаем**:
-1. **Initiative Switcher**: Команда `инициативы` — список всех инициатив с статусами. Команда `переключись на [id]` — загрузить другой ProductState.
-2. **Cross-Initiative Insights**: При добавлении инсайта — Copilot проверяет, не релевантен ли он другим инициативам.
-3. **Shared Product Memory**: Product Memory на уровне продукта (не инициативы) — past_launches и learned_patterns доступны для всех инициатив.
-4. **Initiative Dashboard**: Сводка по всем инициативам — stage, readiness, blockers.
-
-**Метрики успеха**:
-- Доля PM с ≥2 параллельными инициативами: ≥60%
-- Время переключения между инициативами: ≤30 сек
-
-**Артефакты**:
-- Обновлённый фасад (Multi-Initiative секция)
-- Обновлённый product-state reference (initiative_id, shared_memory)
-- Initiative Switcher логика
+> Фичи, которые напрямую помогают PM быстрее дойти от инсайта до ПРД. Критерий вижна: ускоряет цикл «инсайт → решение → ПРД».
 
 ---
 
-### Sprint 29: Collaboration & Stakeholder Integration [v4.21]
+### Sprint 29: Collaboration Lite [v4.21] ✅ ЗАВЕРШЁН
 
 **Приоритет**: P3
+
+**Что сделали:**
+1. **Review Request** — Copilot формирует запрос ревью стейкхолдеру (Tech Lead, Аналитик, Дизайнер, C-level) с адаптированным контекстом из ПРД. Вопросы генерируются под аудиторию.
+2. **Feedback Integration** — при получении фидбека Copilot категоризирует замечания (риск / допущение / правка ПРД / отклонение) и структурированно интегрирует в ProductState (risks[], decisions[]).
+3. **ProductState** — добавлено поле `active_prd.review_requests[]` для трекинга запросов ревью.
+4. **Фасад** — новые команды `запросить ревью` и `интегрировать фидбек`.
+
+---
 **Проблема**: Copilot работает один-на-один с PM. Нет интеграции с командой — Tech Lead, аналитик, дизайнер не видят контекст. Коммуникации (comms sub-skill) — односторонние.
 
 **Что делаем**:
-1. **Stakeholder Profiles**: В онбординге — добавить профили ключевых стейкхолдеров (роль, имя, коммуникационные предпочтения).
-2. **Review Request**: Команда `запросить ревью` — Copilot формирует запрос стейкхолдеру с нужным контекстом (для Tech Lead — техническая часть ПРД, для C-level — executive summary).
-3. **Feedback Integration**: При получении фидбека — Copilot помогает PM интегрировать его в ProductState (обновить risks, assumptions, decisions).
-4. **Team Sync**: Команда `синхронизация` — краткая сводка текущего состояния для команды.
+1. **Review Request**: Команда `запросить ревью` — Copilot формирует запрос стейкхолдеру с нужным контекстом (для Tech Lead — техническая часть ПРД, для C-level — executive summary).
+2. **Feedback Integration**: При получении фидбека — Copilot помогает PM интегрировать его в ProductState (обновить risks, assumptions, decisions).
+
+> **Вырезано в Icebox**: Stakeholder Profiles (вернётся при plugin-фазе), Team Sync (там же).
 
 **Метрики успеха**:
 - Доля ПРД с external feedback: ≥40% (сейчас ~10%)
 - Время от фидбека до интеграции: ≤1 час
 
 **Артефакты**:
-- Обновлённый onboarding (stakeholder profiles)
 - Обновлённый comms sub-skill (review request, feedback integration)
-- Обновлённый фасад (Team Sync секция)
+- Обновлённый фасад (Review Request секция)
 
 ---
 
-## PERF-спринты: Оптимизация скорости и потребления токенов
+### Sprint 39: Output Budget / PRD Tiers [v4.30]
 
-> **Контекст**: Анализ потребления показал — pipeline загружает ~97,600 токенов суммарно, при этом ~54% фасада загружается напрасно на каждом ходу. ProductState растёт бесконтрольно. Ожидаемая экономия: 30-49% in-токенов, ~$900/мес при 100 PM.
+**Приоритет**: P3
+**Проблема**: При генерации ПРД и коммуникаций — Copilot может выдавать 3,000-5,000 out-токенов. Это дорого и долго. Нет контроля за объёмом выходных артефактов. PM не может выбрать глубину ПРД под задачу.
+
+**Что делаем**:
+1. **PRD Size Tiers**: 3 уровня по объёму:
+   - **Brief** (~800 токенов): Ключевые секции, минимум текста
+   - **Standard** (~1,500 токенов): Все секции, умеренная детализация
+   - **Full** (~2,500 токенов): Полный ПРД с деталями
+2. **Comms Size Tiers**: Аналогично:
+   - **Brief** (~400 токенов): Executive summary
+   - **Standard** (~800 токенов): Бриф для PBR
+   - **Full** (~1,200 токенов): Полная коммуникация
+3. **Auto-tier Selection**: Copilot выбирает tier на основе preferred_depth из профиля PM.
+4. **Explicit Tier Override**: PM может запросить конкретный tier: `ПРД brief`, `коммуникация full`.
+
+> **Почему в бизнес-ценности**: PM выбирает глубину ПРД → быстрее от инсайта до артефакта. Это не только экономия токенов, а продуктовое решение.
+
+**Экономия**: -500-1,500 out-токенов за генерацию (для стандартных)
+
+**Метрики успеха**:
+- Средний out-token для PRD standard: ≤1,500
+- Средний out-token для comms standard: ≤800
+
+**Артефакты**:
+- Обновлённый task sub-skill (PRD tiers)
+- Обновлённый comms sub-skill (comms tiers)
+- Обновлённый onboarding (default tier в профиле)
 
 ---
 
-### Sprint 30: PERF-1 — Facade Split [v4.22]
+## Эпик 2: Техдолг — «Надёжный и быстрый пайплайн»
+
+> Не создаёт новую продуктовую ценность напрямую, но без этого продукт деградирует — тормозит, ломается, теряет контекст. Критерий: ускоряет pipeline или устраняет риск потери данных.
+
+> **Контекст PERF**: Pipeline загружает ~97,600 токенов суммарно, ~54% фасада загружается напрасно на каждом ходу. ProductState растёт бесконтрольно. Ожидаемая экономия: 30-49% in-токенов, ~$900/мес при 100 PM.
+
+---
+
+### Sprint 30: QA-AUDIT — Аудит и актуализация тестирования
+
+**Статус**: 📋 Задача-заметка (отдельный спринт перед PERF-блоком)
+**Приоритет**: P2
+
+**Контекст**: pm-copilot-tests содержит 100 тестов (75 T1 + 16 T2 + 9 T3), написанных под v4.11. После Sprint 21-28 в пайплайн добавлены: State Machine, Anti-Overthinking, Learning Loop, Insight Management, Memory Layers, Launch Readiness, Multi-Initiative. Тесты устарели.
+
+**Что нужно сделать**:
+1. **Актуализировать Coverage Matrix**: Пересмотреть связи «что изменилось → какие тесты запускать»
+2. **Добавить тесты на новые фичи**: State Machine, Anti-Overthinking, Express Mode, Learning Loop, Insight Management, Memory Layers, Launch Readiness, Multi-Initiative
+3. **Пересмотреть рубрики**: Обновить T1-рубрики с учётом новых критериев
+4. **Актуализировать дефолтный профиль**: Добавить express mode, experienced PM settings
+
+**Когда**: Перед началом PERF-спринтов
+
+---
+
+### Sprint 31: PERF-1 — Facade Split [v4.22]
 
 **Приоритет**: P1 (критический для скорости)
 **Проблема**: Facade = 1,003 строки / ~12,000 токенов, загружается КАЖДЫЙ ход. Из них ~540 строк (54%) — описания подсистем, которые не нужны на текущем этапе. Это крупнейший потребитель токенов.
@@ -135,7 +159,7 @@
 
 ---
 
-### Sprint 31: PERF-2 — ProductState Compaction [v4.23]
+### Sprint 32: PERF-2 — ProductState Compaction [v4.23]
 
 **Приоритет**: P1
 **Проблема**: ProductState растёт от ~300 токенов (новый продукт) до 8,000+ (зрелый). При каждом ходе весь ProductState подаётся на вход. Нет механизма сжатия.
@@ -162,7 +186,7 @@
 
 ---
 
-### Sprint 32: PERF-3 — Conversation Summarization [v4.24]
+### Sprint 33: PERF-3 — Conversation Summarization [v4.24]
 
 **Приоритет**: P1
 **Проблема**: Conversation history подаётся на вход полностью. В глубоких сессиях (20+ ходов) история занимает 10,000-20,000 токенов. Нет summarization — всё копится.
@@ -185,7 +209,7 @@
 
 ---
 
-### Sprint 33: PERF-4 — TIB-lite Inline [v4.25]
+### Sprint 34: PERF-4 — TIB-lite Inline [v4.25]
 
 **Приоритет**: P2
 **Проблема**: При автовызове TIB (confidence < 0.7, царь-метрика, сюрпризы) — загружается весь TIB sub-skill (254 строки / ~3,000 токенов). Для быстрого режима (2 сценария) это избыточно — нужна только половина.
@@ -207,7 +231,7 @@
 
 ---
 
-### Sprint 34: PERF-5 — Reference Dedup [v4.26]
+### Sprint 35: PERF-5 — Reference Dedup [v4.26]
 
 **Приоритет**: P2
 **Проблема**: `task/references/thinking-in-bets.md` (151 строка) дублирует `facade/references/thinking-in-bets.md` (115 строк). При активации task + TIB — TIB-контент загружается дважды.
@@ -230,7 +254,7 @@
 
 ---
 
-### Sprint 35: PERF-6 — Turn Budget per Phase [v4.27]
+### Sprint 36: PERF-6 — Turn Budget per Phase [v4.27]
 
 **Приоритет**: P2
 **Проблема**: Нет явного бюджета токенов на ход. Copilot может генерировать слишком длинные ответы (особенно при генерации ПРД или коммуникаций), потребляя лишние out-токены и время.
@@ -262,7 +286,7 @@
 
 ---
 
-### Sprint 36: PERF-7 — Conditional Reference Loading [v4.28]
+### Sprint 37: PERF-7 — Conditional Reference Loading [v4.28]
 
 **Приоритет**: P2
 **Проблема**: Все references (domain-context, metrics, thinking-in-bets) загружаются при старте, даже если не нужны. Domain-context (318 строк / ~3,800 токенов) нужен только при первом онбординге или запросе домена.
@@ -289,179 +313,91 @@
 
 ---
 
-### Sprint 37: PERF-8 — Autopilot Shortcut [v4.29]
+## Icebox — «Вне вижна»
 
-**Приоритет**: P3
-**Проблема**: При autopilot on — Copilot генерирует подсказку на каждом ответе. Это добавляет ~300-500 токенов out + время генерации. Для опытных PM — ненужные задержки.
-
-**Что делаем**:
-1. **Smart Autopilot**: Подсказки показываются только при переходах между stage, не на каждом ходу внутри фазы.
-2. **Experienced PM Detection**: Если PM ≥3 полных цикла (goal → learning) — автоматически переключить autopilot на minimal (только переходы).
-3. **Skip Autopilot Command**: Команда `дальше` — PM пропускает подсказку и идёт к следующему шагу без лишних токенов.
-4. **Pre-computed Suggestions**: Частые подсказки (goal→task, hypothesis→goal) — шаблонизировать, не генерировать заново.
-
-**Экономия**: -0.3-0.5 сек/ход, -300-500 out-токенов/ход для опытных PM
-
-**Метрики успеха**:
-- Время генерации ответа: ≤3 сек для простых ходов
-- Out-token per turn с autopilot: ≤1,000
-
-**Артефакты**:
-- Обновлённый фасад (Smart Autopilot секция)
-- Обновлённый onboarding (experienced PM detection)
+> Идеи, которые не противоречат вижну, но сейчас не приоритет — нет ресурса, нет спроса, или нужен plugin-этап. Вернёмся когда контекст изменится.
 
 ---
 
-### Sprint 38: PERF-9 — Output Budget для PRD/comms [v4.30]
+### Autopilot Shortcut [бывш. Sprint 38]
 
-**Приоритет**: P3
-**Проблема**: При генерации ПРД и коммуникаций — Copilot может выдавать 3,000-5,000 out-токенов. Это дорого и долго. Нет контроля за объёмом выходных артефактов.
-
-**Что делаем**:
-1. **PRD Size Tiers**: 3 уровня ПРД по объёму:
-   - **Brief** (~800 токенов): Ключевые секции, минимум текста
-   - **Standard** (~1,500 токенов): Все секции, умеренная детализация
-   - **Full** (~2,500 токенов): Полный ПРД с деталями
-2. **Comms Size Tiers**: Аналогично:
-   - **Brief** (~400 токенов): Executive summary
-   - **Standard** (~800 токенов): Бриф для PBR
-   - **Full** (~1,200 токенов): Полная коммуникация
-3. **Auto-tier Selection**: Copilot выбирает tier на основе preferred_depth из профиля PM.
-4. **Explicit Tier Override**: PM может запросить конкретный tier: `ПРД brief`, `коммуникация full`.
-
-**Экономия**: -500-1,500 out-токенов за генерацию (для стандартных сессий)
-
-**Метрики успеха**:
-- Средний out-token для PRD standard: ≤1,500
-- Средний out-token для comms standard: ≤800
-
-**Артефакты**:
-- Обновлённый task sub-skill (PRD tiers)
-- Обновлённый comms sub-skill (comms tiers)
-- Обновлённый onboarding (default tier в профиле)
+**Почему в Icebox**: Ускоряет опытных PM (-300-500 out-токенов/ход), но PM пока один и это marginal gain. Вернётся когда ≥3 активных PM.
 
 ---
 
-## Отложенные задачи (после Sprint 38)
+### Stakeholder Profiles [вырезано из Sprint 29]
+
+**Почему в Icebox**: Профили стейкхолдеров нужны для командной работы. Текущий вижн — one-on-one copilot. Вернётся при plugin-фазе.
+
+---
+
+### Team Sync [вырезано из Sprint 29]
+
+**Почему в Icebox**: Синхронизация для команды — та же причина. Нужен plugin или multi-seat режим.
+
+---
 
 ### DEV-SKILLS: Выделение development-скиллов (Analyst, Architect, QA)
 
-**Статус**: 📋 Задача-заметка (после Sprint 38, проанализируем и примем решение)
-**Приоритет**: P2
-
-**Контекст**: Сейчас вся development-работа (анализ, проектирование, тестирование пайплайна) делается вручную или ad-hoc. Нет специализированных скиллов для этих ролей. Фасад одновременно является и роутером, и аналитиком, и создателем — это создаёт путаницу и раздувает токены.
+**Статус**: 📋 Задача-заметка
+**Почему в Icebox**: Development-tooling, ускоряет разработку пайпа, но не продукт (не помогает PM принимать решения). Вернётся после стабилизации runtime.
 
 **Предложение — 3 development-скилла**:
+- `pm-copilot-analyst` — аудит, анализ, рекомендации
+- `pm-copilot-architect` — проектирование и изменение пайпа
+- `pm-copilot-qa` — тестирование, покрытие, актуализация
 
-| Скилл | Роль | Триггеры | Что делает |
-|-------|------|----------|------------|
-| `pm-copilot-analyst` | Аналитик | «проанализируй пайплайн», «найди слабые места», «аудит токенов», «оцени архитектуру» | Анализ точек отказа, аудит architecture/CJM, рекомендации по развитию, оценка потребления токенов |
-| `pm-copilot-architect` | Создатель пайпа | «добавь фичу X», «рефакторинг фасада», «создай новый sub-skill», «спроектируй изменения» | Проектирование изменений, написание/обновление SKILL.md и references, обеспечение консистентности, миграция данных |
-| `pm-copilot-qa` | Тестировщик | «проверь покрытие», «сгенерируй тесты для Sprint N», «актуализируй рубрики», «аудит тестов» | Расширенный pm-copilot-tests: прогоны + аудит покрытия + генерация новых тестов + актуализация рубрик + PERF-специфичные тесты |
-
-**Архитектура**:
-```
-pm-copilot/              ← Runtime (PM-facing) — без изменений
-pm-copilot-analyst/      ← Development: аудит, анализ, рекомендации
-pm-copilot-architect/    ← Development: проектирование и изменение пайпа
-pm-copilot-qa/           ← Development: тестирование, покрытие, актуализация
-                         ← pm-copilot-qa наследует/заменяет pm-copilot-tests
-```
-
-**Общие references**: analyst, architect и qa читают те же references (product-state.md, decision-log.md, domain-context.md, metrics.md, thinking-in-bets.md) — single source of truth с runtime.
-
-**Риски**:
-- Triple maintenance: при изменении runtime — нужно обновить все три development-скилла
-- Нужен чёткий контракт: какие файлы каждый скилл читает/пишет, чтобы не было конфликтов
-- Token overhead: +3 description в available_skills, +маршрутизация
-
-**Когда анализировать**: После завершения Sprint 38 (полный опыт 18 спринтов → понятны повторяющиеся паттерны)
-
-**Что нужно сделать (когда дойдём)**:
-1. Проанализировать опыт Sprint 21-38: какие задачи повторялись, какие роли были нужны чаще всего
-2. Оценить, действительно ли нужны 3 отдельных скилла или достаточно 1-2
-3. Спроектировать контракты (read/write для каждого скилла)
-4. Решить: pm-copilot-qa заменяет pm-copilot-tests или расширяет его
-5. Прототипировать минимальный скилл (скорее всего analyst — самый простой и полезный)
+**Когда анализировать**: После стабилизации Эпика 2 (PERF-блок завершён)
 
 ---
 
-### Sprint 39: Decision Quality Metrics [v4.19] (перенесён из Sprint 27)
+### Decision Quality Metrics [бывш. Sprint 40] 📦 Icebox
 
-**Статус**: 📋 Перенесён 2026-05-12 (был Sprint 27, пропущен до накопления данных)
-**Приоритет**: P2
+**Статус**: 📦 Icebox — перенесён 2026-05-12
+**Почему в Icebox**: Требует накопленного Decision Log с `actual_outcome`. На этапе первичного adoption у PM нет данных — Quality Score будет пустым.
 
-**Проблема**: Decision Log фиксирует решения, но не оценивает их качество. Нет метрик: насколько обосновано решение, сколько допущений не проверено, какова дистанция между expected и actual.
+**Что делаем (когда дойдём)**:
+1. **Decision Quality Score**: Оценка по 3 осям: обоснованность, проверенность допущений, калибровка
+2. **Assumption Tracker**: Трекер допущений со статусами
+3. **Decision Dashboard**: Команда `дашборд решений`
 
-**Что делаем**:
-1. **Decision Quality Score**: Автоматическая оценка каждого решения по 3 осям: обоснованность (rationale depth), проверенность допущений (assumptions validated / total), калибровка (expected vs actual).
-2. **Assumption Tracker**: Отдельный трекер допущений с статусами (untested / testing / validated / invalidated). При каждом TIB-автовызове — проверять assumptions.
-3. **Decision Dashboard**: Команда `дашборд решений` — сводка по всем решениям с quality scores, непроверенными assumptions, калибровкой.
-4. **Link с Learning Loop**: При post-launch — Decision Quality Score обновляется с actual_outcome.
-
-**Метрики успеха**:
-- Доля решений с quality score ≥6/10: ≥70%
-- Доля assumptions с статусом tested: ≥50%
-
-**Артефакты**:
-- Обновлённый decision-log reference (quality_score, assumption_tracker)
-- Обновлённый фасад (Decision Dashboard секция)
-- Обновлённый post-launch sub-skill (калибровка)
-
-**Когда делать**: После Sprint 38, когда реальные PM накопят Decision Log с `actual_outcome`.
-
----
-
-### QA-AUDIT: Аудит и актуализация тестирования
-
-**Статус**: 📋 Задача-заметка (без привязки к спринту)
-**Приоритет**: P2 (когда дойдём — проанализируем и уточним)
-
-**Контекст**: pm-copilot-tests содержит 100 тестов (75 T1 + 16 T2 + 9 T3), написанных под v4.11. После Sprint 21-38 в пайплайн добавятся: State Machine, Anti-Overthinking, Learning Loop, Insight Management, Memory Layers, Launch Readiness, Decision Quality, Multi-Initiative, Collaboration, Facade Split, Compaction, Summarization, TIB-lite, Reference Dedup, Turn Budget, Conditional Loading, Autopilot Shortcut, Output Budget. Каждый спринт меняет архитектуру → тесты могут устареть.
-
-**Что нужно сделать (когда дойдём)**:
-1. **Актуализировать Coverage Matrix**: Пересмотреть связи «что изменилось → какие тесты запускать» с учётом новых фич
-2. **Добавить тесты на новые фичи**: State Machine, Anti-Overthinking, Express Mode, Learning Loop, Insight Management, Memory Layers, Launch Readiness, Decision Quality, Multi-Initiative, Collaboration, Facade Split, Compaction, Summarization, TIB-lite, Reference Dedup, Turn Budget, Conditional Loading, Autopilot Shortcut, Output Budget
-3. **Пересмотреть рубрики**: Обновить T1-рубрики с учётом новых критериев (phase limits, compaction quality, budget compliance)
-4. **Добавить PERF-специфичные тесты**: Token budget compliance, Compaction без потери данных, Lazy loading корректность
-5. **Актуализировать дефолтный профиль**: Добавить express mode, PRD tier, experienced PM settings
-
-**Когда анализировать**: После завершения Sprint 29 (перед PERF-спринтами) или после Sprint 38 (полная актуализация)
+**Когда**: Когда реальные PM накопят Decision Log с `actual_outcome`
 
 ---
 
 ## Сводная дорожная карта
 
 ```
-Sprint 21 ─── Orchestrator Logic + State Machine [v4.13] ──── ✅
-Sprint 22 ─── Anti-Overthinking + Express Mode [v4.14] ──── ✅
-Sprint 23 ─── Learning Loop [v4.15] ──────────────────── ✅
-Sprint 24 ─── Insight Management [v4.16] ──────────────── ✅
-Sprint 25 ─── ProductState Lifecycle + Memory Layers [v4.17] ── ✅
-Sprint 26 ─── Launch Readiness [v4.18] ────────────────── ✅
-Sprint 27 ─── ~~Decision Quality Metrics [v4.19]~~ ──────── ⏭️ SKIPPED → Sprint 39
-Sprint 28 ─── Multi-Initiative Support [v4.20] ────────── ✅
-Sprint 29 ─── Collaboration & Stakeholders [v4.21] ────── P3
-───────────────────────────────────────────────────────────────
-Sprint 30 ─── PERF-1: Facade Split [v4.22] ────────────── P1
-Sprint 31 ─── PERF-2: ProductState Compaction [v4.23] ─── P1
-Sprint 32 ─── PERF-3: Conversation Summarization [v4.24] ── P1
-Sprint 33 ─── PERF-4: TIB-lite Inline [v4.25] ────────── P2
-Sprint 34 ─── PERF-5: Reference Dedup [v4.26] ────────── P2
-Sprint 35 ─── PERF-6: Turn Budget per Phase [v4.27] ──── P2
-Sprint 36 ─── PERF-7: Conditional Reference Loading [v4.28] ── P2
-Sprint 37 ─── PERF-8: Autopilot Shortcut [v4.29] ─────── P3
-Sprint 38 ─── PERF-9: Output Budget [v4.30] ──────────── P3
-───────────────────────────────────────────────────────────────
-DEV-SKILLS ─ Выделение development-скиллов ────────────── 📋 Заметка
-QA-AUDIT  ─── Аудит тестирования ──────────────────────── 📋 Заметка
+═══════════════════════════════════════════════════════════
+ЭПИК 1: ПРОДУКТОВАЯ ЦЕННОСТЬ
+═══════════════════════════════════════════════════════════
+Sprint 29 ─── Collaboration Lite [v4.21] ─────────────── ✅ ЗАВЕРШЁН
+Sprint 39 ─── PRD Tiers / Output Budget [v4.30] ──────── P3
+
+═══════════════════════════════════════════════════════════
+ЭПИК 2: ТЕХДОЛГ
+═══════════════════════════════════════════════════════════
+Sprint 30 ─── QA-AUDIT ──────────────────────────────── P2
+Sprint 31 ─── PERF-1: Facade Split [v4.22] ────────────── P1
+Sprint 32 ─── PERF-2: ProductState Compaction [v4.23] ─── P1
+Sprint 33 ─── PERF-3: Conversation Summarization [v4.24] ── P1
+Sprint 34 ─── PERF-4: TIB-lite Inline [v4.25] ────────── P2
+Sprint 35 ─── PERF-5: Reference Dedup [v4.26] ────────── P2
+Sprint 36 ─── PERF-6: Turn Budget per Phase [v4.27] ──── P2
+Sprint 37 ─── PERF-7: Conditional Reference Loading [v4.28] ── P2
+
+═══════════════════════════════════════════════════════════
+ICEBOX
+═══════════════════════════════════════════════════════════
+📦 Autopilot Shortcut ───────────────────────────────── marginal gain (1 PM)
+📦 Stakeholder Profiles ─────────────────────────────── нужна plugin-фаза
+📦 Team Sync ─────────────────────────────────────────── нужна plugin-фаза
+📦 DEV-SKILLS ─────────────────────────────────────────── development-tooling
+📦 Decision Quality Metrics ──────────────────────────── нет данных
 ```
 
-### Ожидаемая экономия от PERF-спринтов
+### Ожидаемая экономия от PERF-спринтов (Эпик 2)
 
-| Метрика | До | После (оценка) | Экономия |
-|---------|-----|----------------|----------|
-| In-token на старте | ~21,700 | ~12,000-15,000 | 30-45% |
-| In-token глубокие | ~55,000 | ~25,000-30,000 | 45-55% |
-| Out-token ПРД | ~3,000-5,000 | ~1,500-2,500 | 40-50% |
-| Стоимость/мес (100 PM) | ~$1,800 | ~$900-1,100 | ~$700-900 |
+- **In-token на старте**: ~21,700 → ~12,000-15,000 (30-45%)
+- **In-token глубокие сессии**: ~55,000 → ~25,000-30,000 (45-55%)
+- **Стоимость/мес (100 PM)**: ~$1,800 → ~$900-1,100 (~$700-900 экономии)
