@@ -4,6 +4,22 @@
 
 ---
 
+## v4.22 — Memory UX: Quick Capture + Archive Search (2026-05-14)
+
+**Что сделали:**
+- **Quick Capture** — 4 команды для мгновенной записи контекста без уточняющих вопросов: `конкурент [текст]`, `данные [текст]`, `фидбек [текст]`, `решение руководства [текст]`
+- **Context Drop** — при старте сессии Copilot показывает captures, добавленные после последнего визита, с предложением учесть или отложить
+- **Archive Search** — авто-поиск по archive при активации hypothesis (→ гипотезы + решения), goal (→ цели + запуски), post-launch (→ решения + запуски). Блок «Из архива» перед первым вопросом если relevance ≥ 0.4
+- **Команда `поиск [текст]`** — явный поиск по всему archive + shared_memory с результатами по типам
+- **Archive Search Rules** — алгоритм relevance scoring (match_stage 0.3 + match_problem 0.3 + match_text 0.4), cross-initiative поиск
+- **Executive Summary** — новый раздел «Из прошлого опыта» из archive (если релевантно)
+- **ProductState** — расширена schema `insights[]`: добавлены поля `capture_type` (quick/manual) и `related_prd_id`
+- **Онбординг** — информационный блок про Quick Capture в Шаг 4
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot/references/product-state.md, pm-copilot-hypothesis/SKILL.md, pm-copilot-goal/SKILL.md, pm-copilot-post-launch/SKILL.md, pm-copilot-comms/SKILL.md, pm-copilot-onboarding/SKILL.md, README.md
+
+---
+
 ## v4.21 — Collaboration Lite (2026-05-13)
 
 **Что сделали:**

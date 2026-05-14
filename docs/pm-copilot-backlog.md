@@ -1,6 +1,6 @@
 # PM Copilot — Бэклог развития
 
-> Текущая версия: v4.21
+> Текущая версия: v4.22
 > Последнее обновление: 2026-05-14
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 > Changelog: [pm-copilot-changelog.md](pm-copilot-changelog.md)
@@ -35,62 +35,6 @@
 - `pm-copilot-task/SKILL.md` — добавить PRD tiers (3 шаблона), auto-tier selection, explicit override
 - `pm-copilot-comms/SKILL.md` — добавить comms tiers (3 шаблона), аналогичный механизм
 - `pm-copilot-onboarding/SKILL.md` — добавить default tier в профиль PM (Шаг 4 «Предпочтения»)
-
----
-
-### Quick Capture — Быстрая запись контекста между сессиями
-
-**Приоритет**: P3
-**Проблема**: PM постоянно получает информацию вне сессии — competitor intel, данные от аналитика, обратная связь от клиентов. Сейчас записать можно только через `инсайт [текст]` — неочевидный путь. Контекст теряется.
-
-**Что делаем**:
-1. **Quick Capture Commands** — 4 команды: `конкурент [текст]`, `данные [текст]`, `фидбек [текст]`, `решение руководства [текст]`
-2. **Type-specific обработка**: каждый тип — свой source, auto-link к ProductState, follow-up вопрос
-3. **Context Drop** — при старте сессии Copilot показывает накопленные captures
-4. **Расширение Insight Buffer**: новые source-типы, поле capture_type (quick/manual)
-
-**Метрики успеха**: Доля сессий с pre-session captures ≥30%; время от capture до использования ≤2 сессии
-
-**Детальный план реализации**:
-1. **`pm-copilot/references/product-state.md`** — расширить `insights[]` schema:
-   - Добавить source-типы: `конкурент`, `аналитика`, `стейкхолдер`
-   - Добавить поле `capture_type`: `quick | manual`
-   - Добавить поле `related_prd_id` (для auto-link при `данные [текст]`)
-2. **`pm-copilot/SKILL.md`** — фасад:
-   - «Быстрые команды» — добавить 4 команды
-   - «Insight Management» — добавить триггеры auto-detect при вводе quick capture форматов
-   - «Session Resume» — добавить Context Drop: при загрузке ProductState проверять `insights[]` с `capture_type: quick` после `last_context.timestamp`
-   - ProductState формат — обновить `insights[]` schema
-3. **`pm-copilot-onboarding/SKILL.md`** — онбординг:
-   - Шаг 4 «Предпочтения» — блок про Quick Capture: 4 типа команд
-
----
-
-### Archive Search — Память для принятия решений
-
-**Приоритет**: P3
-**Проблема**: Archive содержит сотни записей, но Copilot не использует их при принятии решений. PM не может спросить «что мы уже пробовали в этом направлении?» — archive доступен только точечно через `детали [поле]`.
-
-**Что делаем**:
-1. **Auto-search по archive** — при работе в hypothesis/goal/post-launch Copilot автоматически ищет релевантные записи
-2. **Cross-initiative search** — поиск в Shared Memory + других инициативах
-3. **Search Result Format** — компактный блок с top-5 релевантных записей
-4. **Команда `поиск [текст]`** — явный поиск по archive + Shared Memory
-5. **Relevance scoring** — оценка релевантности к текущему контексту (stage, problem, active_prd)
-
-**Метрики успеха**: Доля решений с учётом archive ≥50%; команда `поиск` ≥2 раз/неделю
-
-**Детальный план реализации**:
-1. **`pm-copilot/SKILL.md`** — фасад:
-   - «Быстрые команды» — добавить `поиск [текст]`
-   - Новая секция **«Archive Search»**: правила auto-search, Search Result Format, Relevance scoring, Cross-initiative
-   - Activation Matrix — при активации hypothesis/goal/post-launch дополнительно искать по archive
-2. **`pm-copilot/references/product-state.md`** — reference:
-   - Новая секция **«Archive Search Rules»**: алгоритм, scoring (match_stage 0.3 + match_problem 0.3 + match_text 0.4), cross-initiative, формат вывода
-3. **`pm-copilot-hypothesis/SKILL.md`** — «Формулировка гипотезы» → auto-search по archive.hypotheses + archive.decisions
-4. **`pm-copilot-goal/SKILL.md`** — «Декомпозиция цели» → auto-search по archive.past_launches
-5. **`pm-copilot-post-launch/SKILL.md`** — «Оценка результатов» → auto-search по archive.decisions
-6. **`pm-copilot-comms/SKILL.md`** — archive.search для «из прошлого опыта» секции в Executive Summary
 
 ---
 

@@ -13,7 +13,7 @@
 ## Что нужно для работы
 
 - Claude Code (claude.ai/code) или совместимый клиент с поддержкой skills
-- Версия PM Copilot: v4.18
+- Версия PM Copilot: v4.22
 
 ---
 
@@ -85,9 +85,10 @@ pm-copilot-thinking-in-bets/ ← вероятностное мышление (TI
 
 ## Версии
 
+- **v4.22** (Sprint 29) — Memory UX: Quick Capture (4 команды, Context Drop) + Archive Search (авто-поиск, `поиск [текст]`)
+- **v4.21** (Sprint 28) — Collaboration Lite: Review Request, Feedback Integration
+- **v4.20** (Sprint 27) — Multi-Initiative Support: параллельные инициативы, Shared Product Memory
 - **v4.18** (Sprint 26) — Launch Readiness: чеклист готовности к запуску, Go/No-Go frame
-- **v4.17** (Sprint 25) — ProductState Lifecycle + Memory Layers
-- **v4.16** (Sprint 24) — Insight Management
 
 ---
 

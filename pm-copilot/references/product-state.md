@@ -39,7 +39,9 @@ ProductState:
   insights:                           # Insight Buffer (v4.16). При compaction — только new/prioritized
     - id: string                      # формат: insight-YYYY-MM-DD-HHMM
       text: string
-      source: string                  # интервью | аналитика | отзыв | пост-запуск | CustDev | конкурент
+      source: string                  # интервью | аналитика | отзыв | пост-запуск | CustDev | конкурент | стейкхолдер
+      capture_type: quick | manual    # quick — через быструю команду, manual — через `инсайт [текст]` (v4.22)
+      related_prd_id: string | null   # для auto-link при `данные [текст]` к активному ПРД (v4.22)
       impact_score: 0-3               # 0=не связано, 1=косвенное, 2=прямое, 3=критичное
       linked_goal_id: string | null
       linked_hypothesis_id: string | null
@@ -355,6 +357,75 @@ Summary обновлён: [да/нет]
 4. **Summary генерируется один раз**: При первой компактизации, обновляется при последующих
 5. **Обратная распаковка**: Если PM возвращается к архивной цели/гипотезе (команда `переключись на [stage]`) — Copilot извлекает данные из archive обратно в активные поля
 6. **Compaction при каждом переходе stage**: При переходе (кроме back_transition) — автоматически компактить данные завершённого этапа
+
+---
+
+## Archive Search Rules — Поиск по архиву (v4.22)
+
+> Copilot автоматически ищет в archive при работе с hypothesis, goal, post-launch — чтобы PM не повторял ошибки прошлого.
+
+### Алгоритм поиска
+
+При активации соответствующего sub-skill — Copilot ищет в archive по трём критериям:
+
+| Критерий | Вес | Как проверяется |
+|----------|-----|-----------------|
+| `match_stage` | 0.3 | archive-запись относится к тому же stage что и текущий контекст |
+| `match_problem` | 0.3 | текст `problem` пересекается с `text` / `key_learning` записи |
+| `match_text` | 0.4 | keywords из текущего диалога совпадают с текстом записей |
+
+**Relevance Score** = match_stage × 0.3 + match_problem × 0.3 + match_text × 0.4
+
+### Когда срабатывает auto-search
+
+| Контекст | Где ищем |
+|----------|----------|
+| Активация pm-copilot-hypothesis | archive.hypotheses + archive.decisions |
+| Активация pm-copilot-goal | archive.goals + archive.past_launches |
+| Активация pm-copilot-post-launch | archive.decisions + archive.past_launches |
+| Команда `поиск [текст]` | Все поля archive + shared_memory |
+
+### Формат вывода результатов
+
+Если найдено ≥1 релевантная запись (score ≥ 0.4):
+
+```
+📚 Из архива: похожий опыт
+
+1. [тип: гипотеза / запуск / решение] — [краткий текст] (outcome: [результат])
+   Ключевой вывод: [key_learning]
+
+2. ...
+
+Учесть при работе? (да / нет / подробнее)
+```
+
+Если ничего не найдено — ничего не показывать (не отображать «поиск не дал результатов»).
+
+### Cross-initiative поиск
+
+Команда `поиск [текст]` дополнительно ищет в `shared_memory.cross_insights[]` и `shared_memory.learned_patterns[]` других инициатив того же `product_id`.
+
+### Команда `поиск [текст]`
+
+PM может явно запросить поиск по всему архиву:
+
+```
+🔍 Поиск по архиву: [текст]
+
+Найдено [N] записей:
+
+Гипотезы: [X]
+  - [текст] (outcome: [результат], вывод: [key_learning])
+
+Запуски: [Y]
+  - [название] — [key_metric_change] ([result])
+
+Решения: [Z]
+  - [текст] (confidence: [X])
+
+Другие инициативы: [W] записей из shared memory
+```
 
 ---
 
