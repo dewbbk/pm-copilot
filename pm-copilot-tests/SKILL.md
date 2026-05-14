@@ -1,6 +1,6 @@
 ---
 name: pm-copilot-tests
-description: "QA-сьют для PM Copilot. Отдельный skill, не входящий в runtime-пайплайн. Активируется разработчиком/maintainer'ом: 'запусти автотесты', 'прогон тестов', 'проверь качество'. Содержит тест-кейсы (3 уровня: T1 per-skill, T2 кросс-скилл, T3 регресс-дым), per-skill рубрики (LLM-as-Judge), Coverage Matrix и механику прогона. Тесты читают схемы из pm-copilot/references/ (single source of truth). Возвращает таблицу Pass/Fail с баллами. Версия: v4.18 (Sprint 26: Launch Readiness)."
+description: "QA-сьют для PM Copilot. Отдельный skill, не входящий в runtime-пайплайн. Активируется разработчиком/maintainer'ом: 'запусти автотесты', 'прогон тестов', 'проверь качество'. Содержит тест-кейсы (3 уровня: T1 per-skill, T2 кросс-скилл, T3 регресс-дым), per-skill рубрики (LLM-as-Judge), Coverage Matrix и механику прогона. Тесты читают схемы из pm-copilot/references/ (single source of truth). Возвращает таблицу Pass/Fail с баллами. Версия: v5.0 (Lean Facade)."
 ---
 
 # PM Copilot — QA Suite (pm-copilot-tests)
@@ -14,14 +14,21 @@ description: "QA-сьют для PM Copilot. Отдельный skill, не вх
 ## Связь с пайплайном
 
 ```
-pm-copilot/              <- Runtime pipeline (PM-facing), 9 sub-skills
-  SKILL.md               <- facade v4.18
-  references/            <- shared schemas (single source of truth)
-    product-state.md
-    decision-log.md
-    domain-context.md
-    thinking-in-bets.md
-    metrics.md
+pm-copilot/              <- Runtime pipeline (PM-facing), Lean Facade v5.0
+  SKILL.md               <- facade (152 строки, роутер)
+  references/            <- SSoT schemas (product-state, decision-log, domain, metrics, TIB)
+                           product-state.md содержит: schema + lifecycle + compaction +
+                           archive search + session resume + multi-initiative + obsidian +
+                           quick capture + autopilot
+
+pm-copilot-goal/         <- workflow skill (встроены Archive Search, Reflection)
+pm-copilot-hypothesis/   <- workflow skill (встроены Archive Search, Reflection)
+pm-copilot-task/         <- workflow skill (встроены Reflection, TIB → facade reference)
+pm-copilot-generation/   <- workflow skill (встроен Insight Buffer context)
+pm-copilot-comms/        <- workflow skill (встроен Launch Readiness)
+pm-copilot-post-launch/  <- workflow skill (встроены Archive Search, Learning Loop)
+pm-copilot-onboarding/   <- workflow skill (минимальные изменения)
+pm-copilot-thinking-in-bets/ <- workflow skill (без изменений)
 
 pm-copilot-tests/        <- QA suite (developer-facing), этот skill
   SKILL.md               <- test runner + Coverage Matrix + rubrics + test cases
@@ -46,40 +53,90 @@ pm-copilot-tests/        <- QA suite (developer-facing), этот skill
 
 Определяет, какие тесты запускать при изменении конкретного скилла.
 
-| Что изменилось | T1 (per-skill) | T2 (кросс-скилл) | T3 (дым) |
-|----------------|----------------|-------------------|----------|
-| pm-copilot (facade) | T1-state, T1-stage, T1-decision, T1-decision-linking, T1-autopilot, T1-memory, T1-product-memory, T1-session-resume, T1-reflection, T1-router-guard, T1-anti-overthinking, T1-learning-loop, T1-insight, T1-quick-capture, T1-archive-search | T2-routing, T2-handoff, T2-switching, T2-continuity | T3-smoke-routing |
-| pm-copilot-onboarding | T1-onboarding, T1-autopilot (003, 004), T1-memory (002, 003) | T2-per-project | T3-smoke-onboarding |
-| pm-copilot-goal | T1-goal, T1-decision (006), T1-decision-linking (002), T1-reflection (003 ref) | T2-routing, T2-handoff (goal->gen) | T3-smoke-goal |
-| pm-copilot-generation | T1-generation, T1-insight (001, 002) | T2-routing, T2-handoff (goal->gen) | T3-smoke-generation |
-| pm-copilot-hypothesis | T1-hypothesis, T1-decision (005), T1-decision-linking (001), T1-memory (001), T1-product-memory (001, 002), T1-reflection (001) | T2-routing, T2-handoff (hyp->task) | T3-smoke-hypothesis |
-| pm-copilot-task | T1-task, T1-decision (007), T1-decision-linking (002 ref), T1-reflection (003 ref) | T2-routing, T2-handoff (hyp->task, task->comms) | T3-smoke-task |
-| pm-copilot-comms | T1-comms | T2-handoff (task->comms) | T3-smoke-comms |
-| pm-copilot-post-launch | T1-post-launch, T1-decision (008, 009), T1-decision-linking (002 ref), T1-memory (004), T1-product-memory (003, 004), T1-learning-loop (003) | -- | T3-smoke-post-launch |
-| references/domain-context.md + metrics.md | T1-domain | T2-routing (доменный фокус) | T3-smoke-domain |
-| pm-copilot-thinking-in-bets | T1-thinking-in-bets, T1-tib-auto | -- | -- |
-| Obsidian-фичи (vault, frontmatter, dataview, шаблоны) | T1-obsidian | T2-handoff (Obsidian-режим) | T3-smoke-obsidian |
-| ProductState-фичи (state, create/load, update, history) | T1-state | T2-routing, T2-handoff, T2-continuity | T3-smoke-routing |
-| Stage Detection-фичи (detection, display, transitions, back, anti-cycle) | T1-stage | T2-routing, T2-switching | T3-smoke-routing |
-| Autopilot-фичи (suggestions, on/off, что дальше?) | T1-autopilot | T2-routing, T2-handoff | T3-smoke-routing |
-| PM Memory-фичи (style, auto-analysis, adaptation, команда стиль) | T1-memory | T2-routing | T3-smoke-routing |
-| Product Memory-фичи (product_memory, история, past_hypotheses, past_launches, learned_patterns) | T1-product-memory | T2-routing | T3-smoke-routing |
-| Decision Linking-фичи (related_decisions, supersedes, цепочка) | T1-decision-linking | T2-routing | T3-smoke-routing |
-| TIB Auto-фичи (автоподключение, быстрый/полный режим, цепочки решений в TIB) | T1-tib-auto | T2-routing | T3-smoke-routing |
-| Session Resume-фичи (last_context, команда продолжить, автопредложение) | T1-session-resume | T2-continuity | T3-smoke-routing |
-| Reflection-фичи (чекпойнты, вопросы, пропуск, контекст из Decision Linking) | T1-reflection | T2-routing | T3-smoke-routing |
-| Router Guard-фичи (двойная проверка, last_context vs rule_stage, подтверждение PM при расхождении) | T1-router-guard | T2-routing | T3-smoke-routing |
-| Anti-Overthinking-фичи (Phase Limits, Express Mode, Anti-Overthinking Guard, phase_turns) | T1-anti-overthinking | T2-routing | T3-smoke-routing |
-| Learning Loop-фичи (Learning Card, learning→generation bridge, auto-suggest, зрелый продукт, команда уроки) | T1-learning-loop | T2-routing, T2-handoff (learning->gen) | T3-smoke-routing |
-| Insight Management-фичи (Insight Buffer, команда инсайт, Insight Prioritization, Insight→Goal, Insight↔Decision, Insight→Generation Bridge) | T1-insight | T2-routing, T2-handoff (insight->gen, insight->goal) | T3-smoke-routing |
-| Launch Readiness-фичи (Readiness Checklist, Readiness Score, Go/No-Go Frame, Pre-launch Snapshot, команда готовность) | T1-launch-readiness | T2-routing, T2-handoff (comms->launch) | T3-smoke-routing |
-| Quick Capture-фичи (конкурент/данные/фидбек/решение руководства, Context Drop при старте сессии, capture_type) | T1-quick-capture | T2-continuity | T3-smoke-routing |
-| Archive Search-фичи (auto-search в hypothesis/goal/post-launch, команда поиск, relevance scoring, cross-initiative) | T1-archive-search | T2-routing, T2-handoff | T3-smoke-routing |
-| Facade Split-маркеры (LOAD: always/workflow/on-demand, порядок секций) | T1-state, T1-stage, T1-router-guard | T2-routing, T2-continuity | T3-smoke-routing |
+> **v5.0 (Lean Facade)**: Фасад (152 строки) = только роутер (State Machine, Activation Matrix, Router Guard, команды). ProductState schema, Memory, Decision, TIB, Insight, Obsidian, Multi-Initiative, Quick Capture, Archive Search, Autopilot — всё в `references/product-state.md` (SSoT) или встроено в workflow skills.
 
-**Пример 1**: Изменили pm-copilot-hypothesis -> T1-hypothesis (4) + T2-routing (5) + T2-handoff (1: hyp->task) + T3-smoke-hypothesis (1) = 11 тестов, ~6 мин
+**pm-copilot (facade — Lean Facade)**:
+> Фасад = роутер + команды. Изменения фасада влияют на роутинг и навигацию.
+> - T1: T1-state, T1-stage, T1-router-guard
+> - T2: T2-routing, T2-switching, T2-continuity
+> - T3: T3-smoke-routing
 
-**Пример 2**: Изменили Obsidian-секцию в фасаде -> T1-obsidian (4) + T1-onboarding (5, includes Obsidian-setup) + T2-handoff (1: Obsidian-режим) + T3-smoke-obsidian (1) = 11 тестов, ~6 мин
+**pm-copilot/references/product-state.md (SSoT)**:
+> Единый источник правды для ProductState schema + lifecycle + compaction + archive + session resume + multi-initiative + obsidian + quick capture + autopilot.
+> - T1: T1-state, T1-session-resume, T1-quick-capture, T1-archive-search, T1-autopilot
+> - T2: T2-routing, T2-continuity
+> - T3: T3-smoke-routing
+
+**pm-copilot/references/decision-log.md**:
+> Decision Log schema (SSoT).
+> - T1: T1-decision, T1-decision-linking
+> - T2: T2-routing
+> - T3: T3-smoke-routing
+
+**pm-copilot/references/thinking-in-bets.md**:
+> TIB framework (SSoT, единственный — дубль из task удалён).
+> - T1: T1-thinking-in-bets, T1-tib-auto
+> - T2: --
+> - T3: --
+
+**pm-copilot/references/domain-context.md + metrics.md**:
+> Доменный контекст и метрики.
+> - T1: T1-domain
+> - T2: T2-routing (доменный фокус)
+> - T3: T3-smoke-domain
+
+**pm-copilot-onboarding**:
+> - T1: T1-onboarding, T1-autopilot (003, 004), T1-memory (002, 003)
+> - T2: T2-per-project
+> - T3: T3-smoke-onboarding
+
+**pm-copilot-goal** (встроены Archive Search, Reflection):
+> - T1: T1-goal, T1-decision (006), T1-decision-linking (002), T1-reflection (003 ref), T1-archive-search (goal variant)
+> - T2: T2-routing, T2-handoff (goal->gen)
+> - T3: T3-smoke-goal
+
+**pm-copilot-hypothesis** (встроены Archive Search, Reflection):
+> - T1: T1-hypothesis, T1-decision (005), T1-decision-linking (001), T1-memory (001), T1-product-memory (001, 002), T1-reflection (001), T1-archive-search (hyp variant)
+> - T2: T2-routing, T2-handoff (hyp->task)
+> - T3: T3-smoke-hypothesis
+
+**pm-copilot-task** (встроены Reflection, ссылка на facade TIB reference):
+> - T1: T1-task, T1-decision (007), T1-decision-linking (002 ref), T1-reflection (003 ref), T1-anti-overthinking
+> - T2: T2-routing, T2-handoff (hyp->task, task->comms)
+> - T3: T3-smoke-task
+
+**pm-copilot-generation** (встроен Insight Buffer context):
+> - T1: T1-generation, T1-insight (001, 002)
+> - T2: T2-routing, T2-handoff (goal->gen)
+> - T3: T3-smoke-generation
+
+**pm-copilot-comms** (встроен Launch Readiness):
+> - T1: T1-comms, T1-launch-readiness
+> - T2: T2-handoff (task->comms, comms->launch)
+> - T3: T3-smoke-comms
+
+**pm-copilot-post-launch** (встроены Archive Search, Learning Loop):
+> - T1: T1-post-launch, T1-decision (008, 009), T1-decision-linking (002 ref), T1-memory (004), T1-product-memory (003, 004), T1-learning-loop (003), T1-archive-search (post variant)
+> - T2: --
+> - T3: T3-smoke-post-launch
+
+**pm-copilot-thinking-in-bets**:
+> - T1: T1-thinking-in-bets, T1-tib-auto
+> - T2: --
+> - T3: --
+
+**Cross-cutting features** (тесты покрывают фичу независимо от того, где она описана):
+
+- **Obsidian**: T1-obsidian, T2-handoff (Obsidian-режим), T3-smoke-obsidian
+- **Insight Management**: T1-insight, T2-routing, T2-handoff (insight->gen, insight->goal), T3-smoke-routing
+- **PM Memory**: T1-memory, T2-routing, T3-smoke-routing
+- **Product Memory**: T1-product-memory, T2-routing, T3-smoke-routing
+- **Session Resume**: T1-session-resume, T2-continuity, T3-smoke-routing
+- **Multi-Initiative**: T2-switching, T2-continuity, T3-smoke-routing
+
+**Пример 1**: Изменили pm-copilot-goal -> T1-goal (4) + T1-archive-search (1) + T1-reflection (1) + T2-routing (5) + T2-handoff (1) + T3-smoke-goal (1) = 13 тестов, ~7 мин
+
+**Пример 2**: Изменили references/product-state.md -> T1-state + T1-session-resume + T1-quick-capture + T1-archive-search + T1-autopilot + T2-routing + T2-continuity + T3-smoke-routing = 13 тестов, ~7 мин
 
 ---
 

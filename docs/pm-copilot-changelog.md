@@ -4,6 +4,23 @@
 
 ---
 
+## v5.0 — Lean Facade (2026-05-14)
+
+**Что сделали:**
+- **Фасад обрезан**: pm-copilot/SKILL.md с 1,837 → 152 строк (-92%). Роутер + State Machine + Activation Matrix + Router Guard + команды + антипаттерны
+- **Устранено дублирование**: ProductState schema, Memory Layers, Compaction, Decision Log, TIB description — убраны из фасада, SSoT остался в `references/product-state.md`
+- **references/product-state.md обогащён**: добавлены Quick Capture, Autopilot, Multi-Initiative, Obsidian Integration (773 → 918 строк)
+- **Workflow skills обновлены**: встроены Reflection Checkpoints (goal, hypothesis, task), обновлены ссылки на `references/product-state.md`
+- **Удалён дубль**: `pm-copilot-task/references/thinking-in-bets.md` — теперь task ссылается на `pm-copilot/references/thinking-in-bets.md`
+- **Frontmatter обновлён**: все SKILL.md → version v5.0 (Lean Facade)
+- **Архитектура**: Lean Facade — 0 новых skills, 0 новых директорий, 0 перемещённых references. Фасад = чистый роутер
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot/references/product-state.md, pm-copilot-goal/SKILL.md, pm-copilot-hypothesis/SKILL.md, pm-copilot-task/SKILL.md, pm-copilot-generation/SKILL.md, pm-copilot-comms/SKILL.md, pm-copilot-post-launch/SKILL.md, pm-copilot-onboarding/SKILL.md, pm-copilot-thinking-in-bets/SKILL.md, README.md
+
+**Удалённые файлы:** pm-copilot-task/references/thinking-in-bets.md
+
+---
+
 ## v4.23 — Facade Split: LOAD Markers (2026-05-14)
 
 **Что сделали:**

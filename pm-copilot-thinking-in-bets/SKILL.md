@@ -1,6 +1,6 @@
 ---
 name: pm-copilot-thinking-in-bets
-description: "Sub-skill: Общий фреймворк вероятностного мышления для PM в банке. Активируется фасадом pm-copilot автоматически (confidence < 0.7, царь-метрика, прошлые сюрпризы) или вручную. Два режима: быстрый (2 сценария) и полный (4 сценария + premortem + EV). Использует цепочки решений (related_decisions) и Product Memory. На основе Thinking in Bets (Annie Duke). Версия: v4.09."
+description: "Sub-skill: Общий фреймворк вероятностного мышления для PM в банке. Активируется фасадом pm-copilot автоматически (confidence < 0.7, царь-метрика, прошлые сюрпризы) или вручную. Два режима: быстрый (2 сценария) и полный (4 сценария + premortem + EV). Использует цепочки решений (related_decisions) и Product Memory. На основе Thinking in Bets (Annie Duke). Версия: v5.0 (Lean Facade)."
 ---
 
 # Thinking in Bets — Вероятностное мышление для PM

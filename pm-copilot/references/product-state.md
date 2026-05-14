@@ -771,3 +771,148 @@ PM может возобновить работу с последнего кон
 - ProductState не удаляется — только архивируется через compaction
 - Поле `launch_readiness` обновляется при команде `готовность` или автоматически при попытке перехода comms → launch (v4.18)
 - Поле `pre_launch_snapshot` заполняется при подтверждении запуска (Go) и используется при post-launch (v4.18)
+
+## Quick Capture — Быстрые команды записи (v4.22)
+
+4 команды для мгновенной записи контекста без уточняющих вопросов:
+
+- `конкурент [текст]` — сохранить competitor intel в `insights[]` (capture_type: quick, source: конкурент)
+- `данные [текст]` — сохранить данные аналитики (capture_type: quick, source: аналитика, related_prd_id: активный ПРД если есть)
+- `фидбек [текст]` — сохранить обратную связь (capture_type: quick, source: отзыв)
+- `решение руководства [текст]` — зафиксировать топ-даун решение (capture_type: quick, source: стейкхолдер) + предложить связать с открытым Decision
+
+При Quick Capture — Copilot создаёт запись в `insights[]` без уточняющих вопросов. Показывает подтверждение:
+```
+📝 Записано: [text] (источник: [source])
+💡 Связать с целью/гипотезой? (позже / да)
+```
+
+### Context Drop — при старте сессии
+
+При загрузке существующего ProductState — если `insights[]` содержит captures с `date > last_context.timestamp`:
+```
+📬 Новый контекст с прошлого визита:
+  • [text] (источник: [source], [date])
+  • [text] (источник: [source], [date])
+
+Учесть в работе? (да / отложить)
+```
+
+## Autopilot — Проактивные подсказки (v4.05)
+
+Каждый ответ workflow-скилла заканчивается блоком (если autopilot: on):
+
+```
+📌 Следующий шаг: [конкретное действие]
+   Или: [альтернатива]
+```
+
+### Логика предложений
+
+- stage = hypothesis + validated → «Декомпозировать цель?» (→ goal)
+- stage = hypothesis + invalidated → «Сформулировать новую гипотезу?» (→ generation)
+- stage = goal + KR зафиксированы → «Перейти к проработке задачи?» (→ task)
+- stage = goal + uncertain epics → «Валидировать гипотезу?» (→ hypothesis)
+- stage = task + prd ready → «Подготовить бриф для PBR?» (→ comms)
+- stage = comms + коммуникации готовы → «Подтвердить запуск?» (→ launch)
+- stage = comms + readiness не проверялся → «Проверить готовность к запуску?»
+- stage = learning + learning_cards непуст → «Сгенерировать новые идеи?» (→ generation)
+- insights >= 3, нет goals/hypotheses → «Накоплено N инсайтов. Приоритизировать?»
+- insight impact_score >= 2 → «Есть инсайт с высоким влиянием. Превратить в цель?»
+- Decision confidence < 0.7 → «Провести вероятностный анализ?» (→ TIB)
+- Нет подходящего условия → не показывать подсказку
+
+Приоритет: показываем только одно, самое приоритетное. Настройка: `autopilot on/off` в профиле PM.
+
+## Multi-Initiative — Параллельные инициативы (v4.20)
+
+Каждая инициатива — отдельный ProductState файл в `~/pm-copilot-state/[id].md`.
+
+Shared Product Memory — общая память для всех инициатив одного продукта: `~/pm-copilot-shared-product-[product_id].md`.
+
+### Команда `инициативы` — дашборд
+
+Copilot читает все файлы из `~/pm-copilot-state/` и выводит:
+```
+📊 Инициативы продукта: [product_id]
+
+1. [initiative_title]  •  stage: task  •  ПРД: in_review  •  Обновлён: 2 дня назад
+2. [initiative_title]  •  stage: hypothesis  •  Гипотеза: draft  •  Обновлён: сегодня
+3. [initiative_title]  •  stage: comms  •  Readiness: 60%  •  Обновлён: 5 дней назад  ⚠️
+
+Текущая: [initiative_title] (#1)
+
+Переключиться: `переключись на [номер или id]`
+Новая инициатива: `новая инициатива`
+```
+
+Blockers (⚠️) при: readiness < 60% при stage=comms, prd in_review > 5 дней, все hypotheses invalidated.
+
+### Команда `переключись на [номер/id]`
+
+1. Сохранить текущий ProductState в файл
+2. Загрузить выбранный ProductState
+3. Загрузить shared_memory если product_id совпадает
+4. Показать подтверждение с last_context
+
+### Команда `новая инициатива`
+
+1. Генерирует initiative-YYYY-MM-DD-HHMM ID
+2. Копирует product_id и профиль PM
+3. Сохраняет в ~/pm-copilot-state/[new-id].md
+4. Переключается на новую инициативу
+
+### Cross-Initiative Insights
+
+При добавлении инсайта — проверить другие инициативы того же product_id. При наличии ≥1 — предложить пометить как релевантный. При подтверждении — добавить в shared_memory.cross_insights[].
+
+### Shared Product Memory
+
+При старте сессии с ProductState у которого есть product_id:
+1. Проверить ~/pm-copilot-shared-product-[product_id].md
+2. Если есть — загрузить shared_memory (past_launches, learned_patterns, cross_insights)
+3. При compaction — копировать завершённые данные в shared_memory
+
+## Obsidian Integration — Интеграция с Obsidian (v4.04)
+
+### Сохранение артефактов
+
+При сохранении артефакта в Obsidian vault — использовать frontmatter:
+
+```yaml
+---
+type: prd | brief | hypothesis | decision | learning-card
+product_id: string
+initiative_id: string
+stage: string
+created: datetime
+updated: datetime
+tags: [pm-copilot, product-name]
+---
+```
+
+Wiki-links для связей: `[[PRD-2026-05-14-title]]`, `[[decision-001]]`.
+
+### Шаблоны (6)
+
+1. PRD Template — полный ПРД с разделами
+2. PBR Brief — бриф для Planning Board Review
+3. Executive Summary — краткая сводка для руководства
+4. Hypothesis Card — карточка гипотезы
+5. Decision Card — карточка решения
+6. Learning Card — карточка обучения
+
+### Dataview-запросы (5)
+
+1. Все ПРД по продукту
+2. Открытые решения
+3. Гипотезы по статусу
+4. Learning Cards за период
+5. Инициативы по stage
+
+### Команды
+
+- `vault` — показать статус подключения (путь, структура, количество артефактов)
+- `dataview` — показать список доступных запросов
+
+Vault path настраивается при онбординге (pm-copilot-onboarding, Шаг 4).
