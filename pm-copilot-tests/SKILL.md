@@ -48,7 +48,7 @@ pm-copilot-tests/        <- QA suite (developer-facing), этот skill
 
 | Что изменилось | T1 (per-skill) | T2 (кросс-скилл) | T3 (дым) |
 |----------------|----------------|-------------------|----------|
-| pm-copilot (facade) | T1-state, T1-stage, T1-decision, T1-decision-linking, T1-autopilot, T1-memory, T1-product-memory, T1-session-resume, T1-reflection, T1-router-guard, T1-anti-overthinking, T1-learning-loop, T1-insight | T2-routing, T2-handoff, T2-switching, T2-continuity | T3-smoke-routing |
+| pm-copilot (facade) | T1-state, T1-stage, T1-decision, T1-decision-linking, T1-autopilot, T1-memory, T1-product-memory, T1-session-resume, T1-reflection, T1-router-guard, T1-anti-overthinking, T1-learning-loop, T1-insight, T1-quick-capture, T1-archive-search | T2-routing, T2-handoff, T2-switching, T2-continuity | T3-smoke-routing |
 | pm-copilot-onboarding | T1-onboarding, T1-autopilot (003, 004), T1-memory (002, 003) | T2-per-project | T3-smoke-onboarding |
 | pm-copilot-goal | T1-goal, T1-decision (006), T1-decision-linking (002), T1-reflection (003 ref) | T2-routing, T2-handoff (goal->gen) | T3-smoke-goal |
 | pm-copilot-generation | T1-generation, T1-insight (001, 002) | T2-routing, T2-handoff (goal->gen) | T3-smoke-generation |
@@ -73,6 +73,9 @@ pm-copilot-tests/        <- QA suite (developer-facing), этот skill
 | Learning Loop-фичи (Learning Card, learning→generation bridge, auto-suggest, зрелый продукт, команда уроки) | T1-learning-loop | T2-routing, T2-handoff (learning->gen) | T3-smoke-routing |
 | Insight Management-фичи (Insight Buffer, команда инсайт, Insight Prioritization, Insight→Goal, Insight↔Decision, Insight→Generation Bridge) | T1-insight | T2-routing, T2-handoff (insight->gen, insight->goal) | T3-smoke-routing |
 | Launch Readiness-фичи (Readiness Checklist, Readiness Score, Go/No-Go Frame, Pre-launch Snapshot, команда готовность) | T1-launch-readiness | T2-routing, T2-handoff (comms->launch) | T3-smoke-routing |
+| Quick Capture-фичи (конкурент/данные/фидбек/решение руководства, Context Drop при старте сессии, capture_type) | T1-quick-capture | T2-continuity | T3-smoke-routing |
+| Archive Search-фичи (auto-search в hypothesis/goal/post-launch, команда поиск, relevance scoring, cross-initiative) | T1-archive-search | T2-routing, T2-handoff | T3-smoke-routing |
+| Facade Split-маркеры (LOAD: always/workflow/on-demand, порядок секций) | T1-state, T1-stage, T1-router-guard | T2-routing, T2-continuity | T3-smoke-routing |
 
 **Пример 1**: Изменили pm-copilot-hypothesis -> T1-hypothesis (4) + T2-routing (5) + T2-handoff (1: hyp->task) + T3-smoke-hypothesis (1) = 11 тестов, ~6 мин
 
@@ -100,7 +103,7 @@ pm-copilot-tests/        <- QA suite (developer-facing), этот skill
 3. Прогнать, составить отчёт
 4. T2/T3 отложить до контрольного спринта
 
-**Контрольные спринты** (полный прогон T1+T2): Sprint 27, Sprint 30, Sprint 33, Sprint 36, Sprint 38
+**Контрольные спринты** (полный прогон T1+T2): Sprint 30 ✅ (текущий), Sprint 33, Sprint 36, Sprint 39
 
 ### 📋 Полный режим (для релизов и аудита)
 

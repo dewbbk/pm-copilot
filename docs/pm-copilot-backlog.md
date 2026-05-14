@@ -1,6 +1,6 @@
 # PM Copilot — Бэклог развития
 
-> Текущая версия: v4.22
+> Текущая версия: v4.23
 > Последнее обновление: 2026-05-14
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 > Changelog: [pm-copilot-changelog.md](pm-copilot-changelog.md)
@@ -61,29 +61,6 @@
 
 **Детальный план реализации**:
 - `pm-copilot-tests/SKILL.md` — обновить Coverage Matrix, добавить тест-кейсы, обновить профиль
-
----
-
-### Facade Split — Разделение фасада на слои загрузки
-
-**Приоритет**: P1 (критический для скорости)
-
-**Проблема**: Facade = 1,003 строки / ~12,000 токенов, загружается КАЖДЫЙ ход. ~54% — описания подсистем, не нужных на текущем этапе.
-
-**Что делаем**:
-1. Split Facade на 3 слоя:
-   - **Core** (~400 строк): Stage Detection, Activation Matrix, Router Guard, команды — загружается ВСЕГДА
-   - **Workflow Reference** (~300 строк): Autopilot, Session Resume, Reflection, Transitions, Memory — при активации workflow-скилла
-   - **Domain Reference** (~300 строк): PM Memory, Product Memory, Decision Log, Obsidian — по запросу
-2. Loading Strategy: Core всегда, Workflow при активации, Domain по запросу
-3. Обновить Coverage Matrix для нового split
-
-**Экономия**: -6,500 in-токенов/ход
-**Метрики успеха**: Средний in-token budget на старте ≤15,000; Facade Core ≤5,000 токенов
-
-**Детальный план реализации**:
-1. **`pm-copilot/SKILL.md`** — реорганизовать в 3 секции с пометками загрузки (<!-- LOAD: always/workflow/on-demand -->)
-2. **`pm-copilot-tests/SKILL.md`** — обновить Coverage Matrix
 
 ---
 

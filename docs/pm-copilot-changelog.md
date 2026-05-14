@@ -4,6 +4,20 @@
 
 ---
 
+## v4.23 — Facade Split: LOAD Markers (2026-05-14)
+
+**Что сделали:**
+- **LOAD-маркеры** — все секции фасада `pm-copilot/SKILL.md` размечены комментариями загрузки:
+  - `<!-- LOAD: always -->` — Core (~400 строк): State Machine, Activation Matrix, Router Guard, Autopilot, Insight Management, Старт сессии, Reference Map, Orchestration Principles, Artifacts Structure, Commands Table, Anti-Patterns
+  - `<!-- LOAD: workflow -->` — Workflow Reference (~350 строк): Learning Loop, Launch Readiness, Session Resume, Reflection Checkpoints, Anti-Overthinking, TIB автоподключение, Multi-Initiative Support
+  - `<!-- LOAD: on-demand -->` — Domain Reference (~300 строк): PM Memory, Product Memory, Decision Log, Obsidian Integration
+- **Заголовок-комментарий** — добавлен блок с описанием стратегии Facade Split и правилами загрузки
+- **Coverage Matrix** — обновлена в `pm-copilot-tests`: добавлены строки для Quick Capture, Archive Search, Facade Split-маркеров; обновлены контрольные спринты
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot-tests/SKILL.md, README.md
+
+---
+
 ## v4.22 — Memory UX: Quick Capture + Archive Search (2026-05-14)
 
 **Что сделали:**
