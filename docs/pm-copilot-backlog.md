@@ -109,6 +109,114 @@
 
 ---
 
+### Sprint 40: Quick Capture — Быстрая запись контекста между сессиями [v4.31]
+
+**Приоритет**: P3
+**Проблема**: PM постоянно получает информацию вне сессии — competitor intel, данные от аналитика, обратная связь от клиентов, решение руководства. Сейчас записать это можно только через `инсайт [текст]` — неочевидный путь, требует начала сессии. Контекст теряется до следующего формального взаимодействия.
+
+**Что делаем**:
+1. **Quick Capture Commands** — 4 компактные команды для быстрой записи:
+   - `конкурент [текст]` → source: конкурент, auto-prioritize через вопрос «Угроза или возможность?»
+   - `данные [текст]` → source: аналитика, auto-link к tsar_metric если упоминается
+   - `фидбек [текст]` → source: отзыв/клиент, auto-check на связь с текущей гипотезой
+   - `решение руководства [текст]` → source: стейкхолдер, auto-create Decision Log entry (open)
+2. **Type-specific обработка**: Каждый тип capture имеет свой формат записи, автоматическую связь с релевантными полями ProductState и follow-up вопрос для обогащения
+3. **Context Drop** — при старте сессии Copilot показывает накопленные captures: «С момента последней сессии: [N] записей. Показать? (да/нет)». Позволяет PM быстро войти в контекст
+4. **Расширение Insight Buffer**: Новые source-типы в `insights[]`: конкурент, аналитика, стейкхолдер. Существующий `инсайт [текст]` продолжает работать как generic capture
+
+**Метрики успеха**:
+- Доля сессий с pre-session captures: ≥30%
+- Время от capture до использования в решении: ≤2 сессии
+
+**Артефакты**:
+- Обновлённый фасад (новые команды: конкурент, данные, фидбек, решение руководства)
+- Обновлённый product-state reference (расширенный Insight Buffer, новые source-типы)
+- Обновлённый onboarding (объяснение Quick Capture при онбординге)
+
+**Детальный план реализации**:
+
+1. **`pm-copilot/references/product-state.md`** — расширить `insights[]` schema:
+   - Добавить source-типы: `конкурент`, `аналитика`, `стейкхолдер` (сейчас есть: интервью, аналитика, отзыв, пост-запуск, CustDev, конкурент — дополнить)
+   - Добавить поле `capture_type`: `quick | manual` (для различия как инсайт попал — через quick capture или через `инсайт [текст]`)
+   - Добавить поле `related_prd_id` (для auto-link при `данные [текст]`)
+
+2. **`pm-copilot/SKILL.md`** — фасад:
+   - Секция «Быстрые команды» — добавить 4 команды: `конкурент [текст]`, `данные [текст]`, `фидбек [текст]`, `решение руководства [текст]`
+   - Секция «Insight Management» — добавить триггеры: auto-detect при вводе quick capture форматов
+   - Секция «Session Resume» — добавить Context Drop: при загрузке ProductState проверять `insights[]` с `capture_type: quick` после `last_context.timestamp`, показывать счётчик
+   - ProductState формат — обновить `insights[]` schema (добавить capture_type, related_prd_id)
+
+3. **`pm-copilot-onboarding/SKILL.md`** — онбординг:
+   - Шаг 4 «Предпочтения» — добавить блок про Quick Capture: объяснить 4 типа команд, спросить хочет ли PM чтобы Copilot активно предлагал записывать наблюдения
+
+---
+
+### Sprint 41: Archive Search — Память для принятия решений [v4.32]
+
+**Приоритет**: P3
+**Проблема**: Archive содержит сотни записей (completed goals, finalized hypotheses, reviewed decisions, past_launches), но Copilot не использует их при принятии решений. PM не может спросить «что мы уже пробовали в этом направлении?» — archive доступен только точечно через `детали [поле]`. Опыт теряется.
+
+**Что делаем**:
+1. **Auto-search по archive** — при работе в hypothesis, goal, post-launch Copilot автоматически ищет релевантные записи:
+   - При формулировке гипотезы → «Что мы уже пробовали?» → archive.hypotheses + archive.decisions
+   - При оценке рисков → «Был ли похожий запуск?» → archive.past_launches
+   - При post-launch → «Почему мы приняли похожее решение?» → archive.decisions
+2. **Cross-initiative search** — поиск не только в текущем initiative, но и в Shared Memory + других инициативах того же product_id
+3. **Search Result Format** — компактный блок при автоматическом срабатывании:
+   ```
+   🔍 Найдено в истории (3 записи):
+   1. [2025-11] Гипотеза «X» — invalidated. Причина: ...
+   2. [2025-09] Запуск «Y» — rolled_back. Урок: ...
+   3. [2025-06] Решение «Z» — reviewed. Outcome: ...
+   Учесть при работе? (да/нет)
+   ```
+4. **Команда `поиск [текст]`** — явный поиск по archive + Shared Memory. PM задаёт вопрос — Copilot ищет релевантные записи
+5. **Relevance scoring** — Copilot оценивает релевантность каждой записи к текущему контексту (stage, problem, active_prd), показывает только top-5
+
+**Метрики успеха**:
+- Доля решений с учётом archive: ≥50% (сейчас ~0%)
+- Команда `поиск` используется ≥2 раз/неделю при активной работе
+
+**Артефакты**:
+- Обновлённый фасад (команда `поиск`, auto-search триггеры)
+- Обновлённый product-state reference (search rules, relevance scoring)
+- Обновлённые sub-skills (hypothesis, goal, post-launch — auto-search при работе)
+
+**Детальный план реализации**:
+
+1. **`pm-copilot/SKILL.md`** — фасад:
+   - Секция «Быстрые команды» — добавить `поиск [текст]`
+   - Новая секция **«Archive Search»** (после Insight Management):
+     - Правила auto-search: какие триггеры → какие источники archive
+     - Search Result Format (шаблон вывода)
+     - Relevance scoring: критерии релевантности (совпадение по stage/problem/active_prd тексту)
+     - Cross-initiative: порядок поиска (текущий archive → shared_memory → другие initiative files)
+   - Activation Matrix: при активации hypothesis/goal/post-launch — дополнительно искать по archive
+
+2. **`pm-copilot/references/product-state.md`** — reference:
+   - Новая секция **«Archive Search Rules»**:
+     - Алгоритм поиска: парсинг запроса → scan archive.* → score relevance → sort → top-5
+     - Relevance scoring: weighted score = match_stage(0.3) + match_problem(0.3) + match_text(0.4)
+     - Cross-initiative правила: какие поля из shared_memory участвуют в поиске
+     - Формат Search Result (шаблон для LLM-вывода)
+
+3. **`pm-copilot-hypothesis/SKILL.md`** — sub-skill:
+   - Шаг «Формулировка гипотезы» — добавить auto-search: перед показом гипотезы PM → Copilot ищет в archive.hypotheses похожие (по тексту + проблеме)
+   - Шаблон: «🔍 В истории найдено [N] похожих гипотез: ... Учесть при формулировке?»
+
+4. **`pm-copilot-goal/SKILL.md`** — sub-skill:
+   - Шаг «Декомпозиция цели» — добавить auto-search: при определении эпиков с неопределённостью → Copilot ищет в archive.past_launches похожие запуски
+   - Шаблон: «🔍 Похожий запуск уже был: [title], результат: [result]. Учесть в план?»
+
+5. **`pm-copilot-post-launch/SKILL.md`** — sub-skill:
+   - Шаг «Оценка результатов» — добавить auto-search: при заполнении actual_outcome → Copilot ищет archive.decisions с похожей проблемой для сравнения
+   - Шаблон: «🔍 Похожее решение [date]: [text]. Outcome: [actual_outcome]. Сравнить?»
+
+6. **`pm-copilot-comms/SKILL.md`** — sub-skill:
+   - Команда `поиск` доступна на любом stage через фасад, но comms может использовать archive.search при подготовке Executive Summary (показать «из прошлого опыта» секцию)
+
+---
+
 ## Эпик 2: Техдолг — «Надёжный и быстрый пайплайн»
 
 > Не создаёт новую продуктовую ценность напрямую, но без этого продукт деградирует — тормозит, ломается, теряет контекст. Критерий: ускоряет pipeline или устраняет риск потери данных.
@@ -351,7 +459,7 @@
 
 ---
 
-### Decision Quality Metrics [бывш. Sprint 40] 📦 Icebox
+### Decision Quality Metrics 📦 Icebox
 
 **Статус**: 📦 Icebox — перенесён 2026-05-12
 **Почему в Icebox**: Требует накопленного Decision Log с `actual_outcome`. На этапе первичного adoption у PM нет данных — Quality Score будет пустым.
@@ -373,6 +481,8 @@
 ═══════════════════════════════════════════════════════════
 Sprint 29 ─── Collaboration Lite [v4.21] ─────────────── ✅ ЗАВЕРШЁН
 Sprint 39 ─── PRD Tiers / Output Budget [v4.30] ──────── P3
+Sprint 40 ─── Quick Capture [v4.31] ──────────────────── P3
+Sprint 41 ─── Archive Search [v4.32] ─────────────────── P3
 
 ═══════════════════════════════════════════════════════════
 ЭПИК 2: ТЕХДОЛГ
