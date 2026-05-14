@@ -4,6 +4,21 @@
 
 ---
 
+## v5.1 — Fix Sprint (2026-05-14)
+
+**Что сделали:**
+- **BUG-01 [HIGH]:** Rule 3 State Machine — добавлено условие `active_prd пуст`. Без этого при hypotheses[] nonempty + active_prd=draft роутинг перехватывался в goal вместо task.
+- **BUG-02 [MEDIUM]:** `generation` stage добавлен в stage enum (product-state.md) и State Machine Rule 2. Ранее generation был в Activation Matrix, но отсутствовал в enum и detection rules — pm-copilot-generation никогда не активировался через роутер.
+- **WARN-01:** Удалён Rule 5 (unreachable dead code — полностью покрывался Rule 4). Перенумерованы правила 1-10.
+- **WARN-02:** Анти-цикл механизм — уточнена формулировка (конкретный вопрос вместо «мягко подсветить»).
+- **ISSUE-01:** Reflection Checkpoints в task — исправлено описание (было «Между Фазой 3→4 и 5→6», стало «Перед Фазой 3 и перед Фазой 5»).
+- **install.sh:** добавлен `rm -rf` перед `cp -r` — удалённые в репо файлы теперь корректно удаляются из installed.
+- **Version bump:** references/product-state.md, references/thinking-in-bets.md — обновлены до v5.1.
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot/references/product-state.md, pm-copilot/references/thinking-in-bets.md, pm-copilot-task/SKILL.md, install.sh, README.md, docs/pm-copilot-backlog.md, docs/pm-copilot-changelog.md
+
+---
+
 ## v5.0 — Lean Facade (2026-05-14)
 
 **Что сделали:**

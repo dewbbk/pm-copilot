@@ -25,6 +25,8 @@ mkdir -p "$INSTALL_DIR"
 echo "Устанавливаем скиллы в $INSTALL_DIR..."
 for dir in "$REPO_DIR"/pm-copilot*/; do
   name=$(basename "$dir")
+  # Удаляем старую версию целиком (cp -r не удаляет файлы, удалённые в репо)
+  rm -rf "$INSTALL_DIR/$name"
   cp -r "$dir" "$INSTALL_DIR/$name"
   echo "  ✓ $name"
 done

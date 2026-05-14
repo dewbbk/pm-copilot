@@ -1,7 +1,7 @@
 # ProductState — Схема состояния продукта
 
 > Single source of truth. Тесты (pm-copilot-tests) и скиллы ссылаются на этот файл.
-> Версия: v4.18 (Sprint 26: Launch Readiness)
+> Версия: v5.1 (Fix Sprint: State Machine + Generation Stage)
 
 ## Формат ProductState
 
@@ -15,7 +15,7 @@ ProductState:
   id: string                          # уникальный ID инициативы (автогенерация: initiative-YYYY-MM-DD-HHMM)
   product_id: string                  # ID продукта-родителя (группирует инициативы, например: product-dc-ntb)
   initiative_title: string            # Краткое название инициативы для дашборда (макс. 50 символов)
-  stage: enum                         # insight | goal | hypothesis | task | comms | launch | post-launch | learning
+  stage: enum                         # insight | generation | goal | hypothesis | task | comms | launch | post-launch | learning
   problem: string                     # формулировка проблемы PM
   goals:                              # список целей (ПУТЬ 1 — первична)
     - id: string

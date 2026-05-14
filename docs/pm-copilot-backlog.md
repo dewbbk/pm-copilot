@@ -1,6 +1,6 @@
 # PM Copilot — Бэклог развития
 
-> Текущая версия: v5.0 (Lean Facade)
+> Текущая версия: v5.1 (Fix Sprint)
 > Последнее обновление: 2026-05-14
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 > Changelog: [pm-copilot-changelog.md](pm-copilot-changelog.md)
