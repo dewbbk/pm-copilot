@@ -1,7 +1,7 @@
 # PM Copilot — Бэклог развития
 
-> Текущая версия: v5.1 (Fix Sprint)
-> Последнее обновление: 2026-05-14
+> Текущая версия: v5.2 (Product Scope)
+> Последнее обновление: 2026-05-15
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 > Changelog: [pm-copilot-changelog.md](pm-copilot-changelog.md)
 
@@ -14,6 +14,49 @@
 ## Эпик 1: Продуктовая ценность — «Copilot, который принимает решения»
 
 > Фичи, которые напрямую помогают PM быстрее дойти от инсайта до ПРД. Критерий вижна: ускоряет цикл «инсайт → решение → ПРД».
+
+---
+
+### ~~Product Scope~~ — Границы продукта в Working Memory ✅ РЕШЕНО в v5.2
+
+---
+
+### Obsidian-Read-Before-Ask — Сначала ищи в Obsidian
+
+**Приоритет**: P2
+**Источник**: Обратная связь от коллег (2026-05-15)
+
+**Проблема**: Для активных Obsidian-юзеров — Copilot задаёт вопросы, ответы на которые уже лежат в vault. При явном запросе «поищи в Obsidian» находит, но на следующем вопросе снова спрашивает PM вместо автопоиска. Нет инструкции «сначала проверь vault, потом спрашивай».
+
+**Что делаем**:
+1. **Pre-Ask Vault Scan** — перед каждым вопросом к PM, grep по vault по ключевым терминам
+2. **Found-in-Vault Response** — если ответ найден, использовать его, не спрашивать
+3. **Stage-limited** — применять только на `generation`/`goal` стадиях (где вероятность наличия данных в vault выше)
+4. **Token Budget** — ограничить +500 in-токенов на проверку
+
+**Метрики успеха**: Доля вопросов с ответом в vault ≤10%
+**Риск**: +[DEPARTMENT_7806] in-токенов на каждый ход при сканировании
+**Затронутые файлы**: `pm-copilot/SKILL.md`, workflow sub-skills (`pm-copilot-goal`, `pm-copilot-hypothesis`, `pm-copilot-generation`)
+
+---
+
+### Stakeholder Lens — Ранний взгляд стейкхолдеров
+
+**Приоритет**: P2
+**Источник**: Обратная связь от коллег (2026-05-15)
+
+**Проблема**: Стейкхолдеры появляются только в `/pm-copilot-comms`, когда ПРД готов. PM хочет подключать их раньше — на этапе идеи: подумать над задачей как стейкхолдер/аналитик/разработчик, подготовиться к встрече (какие вопросы зададут, какие возражения возникнут), отсечь идеи, которые не пройдут юристов/финансов.
+
+**Что делаем**:
+1. **Stakeholder Perspectives** — типовые перспективы: юрист, финансист, аналитик, разработчик, C-level, compliance
+2. **Lens Activation** — команда `взгляд [перспектива]` или авто-предложение в goal/hypothesis
+3. **Output per perspective**: (1) вопросы стейкхолдера, (2) возражения, (3) красные флаги, (4) что подготовить
+4. **Idea Filter** — суммарная оценка «пройдёт / не пройдёт» по всем перспективам
+
+**Отличие от Icebox «Stakeholder Profiles»**: Stakeholder Profiles — командная работа / plugin-фаза. Stakeholder Lens — индивидуальный thinking tool для one-on-one copilot.
+
+**Метрики успеха**: PM использует Stakeholder Lens ≥30% сессий с goal/hypothesis
+**Затронутые файлы**: `pm-copilot-goal/SKILL.md`, `pm-copilot-hypothesis/SKILL.md`, новый reference `stakeholder-lenses.md` или блок в существующий reference
 
 ---
 
@@ -80,27 +123,6 @@
 
 **Статус**: Решено. TIB reference на месте, дубль из task удалён. Потребность в inline-lite отпала — фасад не содержит TIB описания.
 
-### ~~ProductState Compaction~~ — Сжатие состояния продукта (оригинальная задача)
-
-**Приоритет**: P1
-**Зависимость**: После Facade Split
-
-**Проблема**: ProductState растёт от ~300 токенов (новый) до 8,000+ (зрелый). Весь подаётся на вход каждого хода. Нет механизма сжатия.
-
-**Что делаем**:
-1. Compaction Rules — явные правила сжатия для каждого поля
-2. Auto-Compaction Trigger — при >5 переходов от created
-3. Detail-on-Demand — команда `детали [поле]`
-
-**Экономия**: -2,000-5,000 in-токенов/ход (для зрелых продуктов)
-**Метрики успеха**: ProductState средний ≤2,500 токенов; данные доступны по запросу 100%
-
-**Детальный план реализации**:
-1. **`pm-copilot/references/product-state.md`** — добавить compaction rules, триггеры, формат summary
-2. **`pm-copilot/SKILL.md`** — секция Compaction, обновить Lifecycle
-
----
-
 ### Conversation Summarization — Сжатие истории диалога
 
 **Приоритет**: P1
@@ -123,47 +145,6 @@
 
 ---
 
-### TIB-lite Inline — Компактный TIB для быстрого режима
-
-**Приоритет**: P2
-
-**Проблема**: При автовызове TIB загружается весь sub-skill (~3,000 токенов). Для быстрого режима избыточно.
-
-**Что делаем**:
-1. TIB-lite Template (~400 токенов) встроить в фасад
-2. Inline для быстрого режима, Full для полного
-3. Full → Lite Fallback при пропуске TIB
-
-**Экономия**: -2,500 in-токенов при автовызове быстрого режима
-**Метрики успеха**: In-token при TIB quick ≤+500; доля quick ≥60%
-
-**Детальный план реализации**:
-1. **`pm-copilot/SKILL.md`** — TIB-lite inline секция
-2. **`pm-copilot-thinking-in-bets/SKILL.md`** — уточнение режимов quick/full
-
----
-
-### Reference Dedup — Устранение дублирования references
-
-**Приоритет**: P2
-
-**Проблема**: `task/references/thinking-in-bets.md` дублирует `facade/references/thinking-in-bets.md`. TIB загружается дважды при task + TIB.
-
-**Что делаем**:
-1. Удалить дубликат из task/references
-2. Audit всех references на дублирование
-3. Reference Index — единый индекс
-
-**Экономия**: -1,800 in-токенов
-**Метрики успеха**: Дублирование 0%; общий размер references снижение ≥15%
-
-**Детальный план реализации**:
-1. **`pm-copilot-task/references/thinking-in-bets.md`** — удалить
-2. **`pm-copilot-task/SKILL.md`** — обновить ссылку на facade reference
-3. **Audit** — проверить все 5 reference файлов
-
----
-
 ### Turn Budget per Phase — Бюджет токенов на ход
 
 **Приоритет**: P2
@@ -179,25 +160,6 @@
 
 **Детальный план реализации**:
 1. **`pm-copilot/SKILL.md`** — Turn Budget секция + Budget Table
-
----
-
-### Conditional Reference Loading — Ленивая загрузка references
-
-**Приоритет**: P2
-
-**Проблема**: Все references загружаются при старте, даже если не нужны. Domain-context (~3,800 токенов) нужен только при онбординге.
-
-**Что делаем**:
-1. Lazy Loading — references по запросу (domain → при онбординге, metrics → при goal, TIB → при автовызове)
-2. Reference Trigger Map — таблица «команда → reference»
-3. Cache Loaded References
-
-**Экономия**: -2,000-4,000 in-токенов (domain + metrics не нужны на ~60% ходов)
-**Метрики успеха**: In-token при простых ходах ≤12,000; cache hit rate ≥70%
-
-**Детальный план реализации**:
-1. **`pm-copilot/SKILL.md`** — Conditional Reference Loading секция + Reference Trigger Map
 
 ---
 

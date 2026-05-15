@@ -4,6 +4,19 @@
 
 ---
 
+## v5.2 — Product Scope (2026-05-15)
+
+**Что сделали:**
+- **product_scope** — новое поле в Working Memory: краткое описание границ продукта (загружается каждый ход, держит контекст)
+- **Заполнение** — на insight stage Copilot выводит product_scope из описания проблемы PM → спрашивает подтверждение
+- **Антипаттерн** — добавлена строка «Не выходить за рамки product_scope из Working Memory»
+- **Version bump:** pm-copilot/SKILL.md, references/product-state.md → v5.2
+- **Бэклог cleanup** — удалены 4 дубля resolved-задач (TIB-lite, Reference Dedup, Conditional Reference Loading, ProductState Compaction)
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot/references/product-state.md, README.md, docs/pm-copilot-backlog.md, docs/pm-copilot-changelog.md
+
+---
+
 ## v5.1 — Fix Sprint (2026-05-14)
 
 **Что сделали:**

@@ -1,7 +1,7 @@
 # ProductState — Схема состояния продукта
 
 > Single source of truth. Тесты (pm-copilot-tests) и скиллы ссылаются на этот файл.
-> Версия: v5.1 (Fix Sprint: State Machine + Generation Stage)
+> Версия: v5.2 (Product Scope)
 
 ## Формат ProductState
 
@@ -14,6 +14,7 @@ ProductState:
   # =============================================
   id: string                          # уникальный ID инициативы (автогенерация: initiative-YYYY-MM-DD-HHMM)
   product_id: string                  # ID продукта-родителя (группирует инициативы, например: product-dc-ntb)
+  product_scope: string               # Границы продукта для удержания контекста (например: «Дебетовая карта NTB: от лендинга до первой траты»). Copilot формулирует из описания проблемы PM → PM подтверждает
   initiative_title: string            # Краткое название инициативы для дашборда (макс. 50 символов)
   stage: enum                         # insight | generation | goal | hypothesis | task | comms | launch | post-launch | learning
   problem: string                     # формулировка проблемы PM
