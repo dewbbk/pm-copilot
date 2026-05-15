@@ -21,10 +21,13 @@ fi
 # Создаём папку skills если нет
 mkdir -p "$INSTALL_DIR"
 
-# Копируем все pm-copilot скиллы
+# Копируем все pm-copilot скиллы (dev-инструменты не устанавливаем)
 echo "Устанавливаем скиллы в $INSTALL_DIR..."
 for dir in "$REPO_DIR"/pm-copilot*/; do
   name=$(basename "$dir")
+  # Пропускаем dev-инструменты — они не нужны пользователям
+  [[ "$name" == "pm-copilot-tests" ]] && continue
+  [[ "$name" == "pm-copilot-dev" ]] && continue
   # Удаляем старую версию целиком (cp -r не удаляет файлы, удалённые в репо)
   rm -rf "$INSTALL_DIR/$name"
   cp -r "$dir" "$INSTALL_DIR/$name"

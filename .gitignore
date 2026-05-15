@@ -1,2 +1,6 @@
 .DS_Store
 **/.DS_Store
+
+# Dev-инструменты — не часть пайплайна
+pm-copilot-tests/
+pm-copilot-dev/
