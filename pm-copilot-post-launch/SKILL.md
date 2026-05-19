@@ -1,6 +1,6 @@
 ---
 name: pm-copilot-post-launch
-description: "Sub-skill: Пост-запуск — Оценка результатов для PM в банке. Активируется фасадом pm-copilot когда PM оценивает результаты запуска. 5 шагов: ПРД как scorecard → сбор результатов по таймлайну → оценка по 3 осям → решение → обучение. Learning Loop: Learning Cards, bridge to generation. Версия: v5.0 (Lean Facade)."
+description: "Sub-skill: Пост-запуск — Оценка результатов для PM в банке. Активируется фасадом pm-copilot когда PM оценивает результаты запуска. 5 шагов: ПРД как scorecard → сбор результатов по таймлайну → оценка по 3 осям → решение → обучение. Learning Cards, bridge to goal. Версия: v6.0 (Goal-First Architecture)."
 ---
 
 # Пост-запуск: Оценка результата
@@ -191,9 +191,9 @@ description: "Sub-skill: Пост-запуск — Оценка результа
 
 **Связь с Learning Loop** (v4.15):
 - Learning Card записывается в `product_memory.learning_cards[]` при завершении Шага 5
-- При следующем цикле (learning → generation) — уроки из Learning Card автоматически переносятся в контекст генерации
+- При следующем цикле (post-launch → goal) — уроки из Learning Card автоматически переносятся в контекст новой цели
 - При выявлении повторяющихся паттернов — Learning Card может породить `learned_pattern` (обобщённый вывод)
-- `learning_cycle_count` инкрементируется при завершении всего цикла goal → ... → learning
+- `learning_cycle_count` инкрементируется при завершении цикла goal → epic → task → comms → launch → post-launch
 
 **Минимальная карточка**: Если PM торопится, Copilot создаёт минимальную карточку с 3 полями: `what_worked` + `what_failed` + `key_learning`. Остальные поля можно заполнить позже командой `дополнить уроки`.
 

@@ -1,6 +1,6 @@
 ---
 name: pm-copilot-comms
-description: "Sub-skill: Коммуникации из ПРД + Review Request + Feedback Integration. Активируется фасадом pm-copilot или напрямую когда PM готовит коммуникации из готового ПРД, запрашивает ревью у стейкхолдеров, или интегрирует полученный фидбек. Launch Readiness: чеклист, readiness score, Go/No-Go. Версия: v5.0 (Lean Facade)."
+description: "Sub-skill: Коммуникации из ПРД + Review Request + Feedback Integration. Активируется фасадом pm-copilot или напрямую когда PM готовит коммуникации из готового ПРД, запрашивает ревью у стейкхолдеров, или интегрирует полученный фидбек. Launch Readiness: чеклист, readiness score, Go/No-Go. Версия: v6.0 (Goal-First Architecture)."
 ---
 
 # PM Copilot — Коммуникации из ПРД
