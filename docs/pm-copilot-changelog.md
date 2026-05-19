@@ -4,6 +4,34 @@
 
 ---
 
+## v6.0 — Goal-First Architecture (2026-05-19)
+
+**Что сделали:**
+- **Архитектурный переход**: goal-first подход — цель всегда первый шаг основного пути
+- **Новый слой epic**: pm-copilot-epic — контейнер юзер стори/тасок между goal и task
+- **Generation как инструмент**: не stage, а callable tool из любого stage через `/идея`
+- **Короткий путь**: `/гипотеза` → hypothesis → task → comms → PRD (без goal/epic)
+- **path field**: `main` (основной) и `short` (короткий) в ProductState
+- **Nested goals**: `goals[].epics[].tasks[]` вместо плоской структуры
+- **State Machine**: 9 правил (было 10) — убраны insight, generation, learning
+- **Backward compatibility**: автоколебание старых состояний при загрузке
+- **Все sub-skills**: version bump v5.0/v5.2 → v6.0
+
+**Изменённые файлы:**
+- pm-copilot/SKILL.md (facade — новая state machine, activation matrix)
+- pm-copilot/references/product-state.md (schema v6.0)
+- pm-copilot-epic/SKILL.md (новый sub-skill)
+- pm-copilot-goal/SKILL.md (handoff в epic)
+- pm-copilot-hypothesis/SKILL.md (короткий путь, path: short)
+- pm-copilot-generation/SKILL.md (инструмент, не stage)
+- pm-copilot-task/SKILL.md (два входа: main + short)
+- pm-copilot-comms/SKILL.md (version bump)
+- pm-copilot-onboarding/SKILL.md (version bump)
+- pm-copilot-post-launch/SKILL.md (version bump, updated cycle)
+- README.md, docs/pm-copilot-backlog.md, docs/pm-copilot-changelog.md
+
+---
+
 ## v5.2 — Product Scope (2026-05-15)
 
 **Что сделали:**
