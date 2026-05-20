@@ -15,7 +15,7 @@ ProductState:
   id: string                          # уникальный ID инициативы (автогенерация: initiative-YYYY-MM-DD-HHMM)
   product_id: string                  # ID продукта-родителя (группирует инициативы, например: product-dc-ntb)
   product_scope: string               # Границы продукта для удержания контекста (например: «Дебетовая карта NTB: от лендинга до первой траты»). Copilot формулирует из описания проблемы PM → PM подтверждает
-  initiative_title: string            # Краткое название инициативы для дашборда (макс. 50 символов)
+  initiative_title: string            # Краткое название инициативы (макс. 50 символов)
   stage: enum                         # goal | epic | hypothesis | task | comms | launch | post-launch
   path: enum                          # main | short (основной путь или короткий)
   problem: string                     # формулировка проблемы PM
@@ -91,7 +91,7 @@ ProductState:
   # Размер: ~1,500-2,500 токенов
   # =============================================
   decisions: []                       # ссылки на Decision Log. При compaction — open + последние 3 reviewed
-  history: []                         # лог переходов между stage. При compaction — последние 5
+  history: []                         # лог переходов между stage, последние 5
     - from: string
       to: string
       timestamp: datetime
