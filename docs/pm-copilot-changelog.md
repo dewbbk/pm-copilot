@@ -4,6 +4,21 @@
 
 ---
 
+## v6.1 — Audit Cleanup (2026-05-24)
+
+**Что сделали:**
+- **ONBOARDING-1**: Удалён Quick Capture — 4 команды, которыми никто не пользовался. Убраны из фасада, product-state.md (схема + секция + Context Drop), онбординга
+- **ONBOARDING-8**: Decision Log оставлен — core-механизм, интегрирован в 10 файлов
+- **ONBOARDING-9**: Удалён Domain Context — domain-context.md (25 строк) удалён, ссылки убраны из goal, hypothesis, epic, comms, onboarding, facade
+- **preferred_depth**: Упрощён с 4 уровней (express/surface/standard/deep) до 2 (quick/full). Обновлены task, goal, hypothesis, post-launch, onboarding, decision-log. Команды: `быстро` / `полностью`
+- **Version bump**: все затронутые SKILL.md → v6.1
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot-goal/SKILL.md, pm-copilot-hypothesis/SKILL.md, pm-copilot-task/SKILL.md, pm-copilot-post-launch/SKILL.md, pm-copilot-epic/SKILL.md, pm-copilot-comms/SKILL.md, pm-copilot-onboarding/SKILL.md, pm-copilot/references/product-state.md, pm-copilot/references/decision-log.md, README.md, docs/pm-copilot-backlog.md, docs/pm-copilot-changelog.md
+
+**Удалённые файлы:** pm-copilot/references/domain-context.md
+
+---
+
 ## v6.0 — Goal-First Architecture (2026-05-19)
 
 **Что сделали:**

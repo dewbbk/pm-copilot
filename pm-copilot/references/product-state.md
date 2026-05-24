@@ -57,8 +57,6 @@ ProductState:
     - id: string                      # формат: insight-YYYY-MM-DD-HHMM
       text: string
       source: string                  # интервью | аналитика | отзыв | пост-запуск | CustDev | конкурент | стейкхолдер
-      capture_type: quick | manual    # quick — через быструю команду, manual — через `инсайт [текст]` (v4.22)
-      related_prd_id: string | null   # для auto-link при `данные [текст]` к активному ПРД (v4.22)
       impact_score: 0-3               # 0=не связано, 1=косвенное, 2=прямое, 3=критичное
       linked_goal_id: string | null
       linked_hypothesis_id: string | null
@@ -798,32 +796,6 @@ PM может возобновить работу с последнего кон
 - ProductState не удаляется — только архивируется через compaction
 - Поле `launch_readiness` обновляется при команде `готовность` или автоматически при попытке перехода comms → launch (v4.18)
 - Поле `pre_launch_snapshot` заполняется при подтверждении запуска (Go) и используется при post-launch (v4.18)
-
-## Quick Capture — Быстрые команды записи (v4.22)
-
-4 команды для мгновенной записи контекста без уточняющих вопросов:
-
-- `конкурент [текст]` — сохранить competitor intel в `insights[]` (capture_type: quick, source: конкурент)
-- `данные [текст]` — сохранить данные аналитики (capture_type: quick, source: аналитика, related_prd_id: активный ПРД если есть)
-- `фидбек [текст]` — сохранить обратную связь (capture_type: quick, source: отзыв)
-- `решение руководства [текст]` — зафиксировать топ-даун решение (capture_type: quick, source: стейкхолдер) + предложить связать с открытым Decision
-
-При Quick Capture — Copilot создаёт запись в `insights[]` без уточняющих вопросов. Показывает подтверждение:
-```
-📝 Записано: [text] (источник: [source])
-💡 Связать с целью/гипотезой? (позже / да)
-```
-
-### Context Drop — при старте сессии
-
-При загрузке существующего ProductState — если `insights[]` содержит captures с `date > last_context.timestamp`:
-```
-📬 Новый контекст с прошлого визита:
-  • [text] (источник: [source], [date])
-  • [text] (источник: [source], [date])
-
-Учесть в работе? (да / отложить)
-```
 
 ## Autopilot — Проактивные подсказки (v4.05)
 
