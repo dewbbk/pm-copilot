@@ -147,7 +147,6 @@ ProductState хранится в файле `~/pm-copilot-state/[id].md`. При
 - `epic list` — показать таски текущего эпика
 - `next` — следующая таска эпика / следующий эпик
 - `решения` / `ревизия` — Decision Log (schema: `references/decision-log.md`)
-- `инициативы` / `переключись на [номер]` / `новая инициатива` — Multi-Initiative (правила: `references/product-state.md`)
 - `метрики` — загрузить фреймворк метрик (`references/metrics.md`)
 - `ПРД` — начать генерацию ПРД
 - `итого` — сводка + сохранить ProductState
@@ -155,7 +154,6 @@ ProductState хранится в файле `~/pm-copilot-state/[id].md`. При
 - `история` — Product Memory
 - `что дальше?` — рекомендация следующего шага (учитывает path: main/short)
 - `autopilot on/off` — включить/выключить проактивные подсказки
-- `vault` / `dataview` — Obsidian (правила: `references/product-state.md`)
 - `запросить ревью` / `интегрировать фидбек` — Collaboration (см. pm-copilot-comms)
 - `поиск [текст]` — поиск по архиву + shared memory
 - `детали [поле]` — данные из archive
