@@ -1,6 +1,6 @@
 ---
 name: pm-copilot-post-launch
-description: "Sub-skill: Пост-запуск — Оценка результатов для PM в банке. Активируется фасадом pm-copilot когда PM оценивает результаты запуска. 5 шагов: ПРД как scorecard → сбор результатов по таймлайну → оценка по 3 осям → решение → обучение. Learning Cards, bridge to goal. Версия: v6.1 (Audit Cleanup)."
+description: "Sub-skill: Пост-запуск — Оценка результатов для PM в банке. Активируется фасадом pm-copilot когда PM оценивает результаты запуска. 5 шагов: ПРД как scorecard → сбор результатов по таймлайну → оценка по 3 осям → решение → обучение. Learning Cards, bridge to goal. Версия: v6.2 (Sprint 30: PERF Cleanup)."
 ---
 
 # Пост-запуск: Оценка результата

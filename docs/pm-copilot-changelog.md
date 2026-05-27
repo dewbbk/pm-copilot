@@ -4,6 +4,18 @@
 
 ---
 
+## v6.2 — PERF Cleanup (2026-05-27)
+
+**Что сделали:**
+- **PERF-1**: Сжат metrics.md (109 → 34 строки) — убраны ASCII-таблицы и шаблоны, оставлены правила и банковские примеры
+- **PERF-2**: Сокращён product-state.md (921 → 397 строк) — в Deferred: Multi-Initiative, Obsidian, Archive Search Rules (с весами), Learning Loop, Session Resume, детали Compaction Rules и Memory Layers
+- Убраны команды `vault`, `dataview`, `инициативы`, `переключись`, `новая инициатива` из фасада (deferred)
+- Упрощены Archive Search триггеры в goal/hypothesis/post-launch/comms (без ссылки на алгоритм с весами)
+
+**Изменённые файлы:** pm-copilot/references/metrics.md, pm-copilot/references/product-state.md, pm-copilot/SKILL.md, pm-copilot-goal/SKILL.md, pm-copilot-hypothesis/SKILL.md, pm-copilot-post-launch/SKILL.md, pm-copilot-comms/SKILL.md, README.md
+
+---
+
 ## v6.1 — Audit Cleanup (2026-05-24)
 
 **Что сделали:**
