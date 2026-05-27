@@ -348,6 +348,32 @@ PreLaunchSnapshot:
 
 Приоритет: одно, самое приоритетное. Настройка: `autopilot on/off` в профиле PM.
 
+## Product Memory — История продукта
+
+> Накапливает опыт продукта. Используется для избегания повторных ошибок и точных рекомендаций.
+
+### Правила заполнения
+
+**past_hypotheses**: При изменении `hypotheses[].status` на validated/invalidated/abandoned → перенести в `past_hypotheses` с `key_learning`.
+
+**past_launches**: При завершении post-launch → добавить запись с результатом (scaled/iterated/pivoted/rolled_back) и главным выводом.
+
+**learned_patterns**: При post-launch — если выявлен повторяющийся паттерн → добавить с `confidence`. Паттерны с confidence < 0.4 — предварительные.
+
+**summary**: Генерируется при первой компактизации. 2-3 предложения ключевого опыта. Обновляется при каждой компактизации.
+
+### Как Copilot использует Product Memory
+
+- При формулировке гипотезы → проверить `past_hypotheses` на повторы
+- При планировании эксперимента → проверить `learned_patterns`
+- При post-launch → добавить в `past_launches`, обновить `learned_patterns`
+- При оценке рисков → проверить `past_launches` с result = rolled_back
+- При начале новой цели/гипотезы → проверить `learned_patterns` confidence >= 0.5
+
+### Команда `история`
+
+Показывает прошлые гипотезы, запуски, паттерны и количество циклов обучения.
+
 ## Backward Compatibility — Совместимость с v5.x
 
 При загрузке ProductState без `path` → defaults to `main`.
