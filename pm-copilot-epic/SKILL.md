@@ -1,6 +1,6 @@
 
 name: pm-copilot-epic
-description: Sub-skill для работы с эпиками. Эпик - это направление или веха, в рамках которой PM достигает цели. Эпик является контейнером тасок или user stories, за счет которых выполняется эпик. Скилл активируется фасадом pm-copilot когда цель сформулирована и эпики определены. 4 фазы: выбор эпика → сбор юзер стори → сохранение → выбор таски. Цикл epic ⇄ task для прохода по таскам. Версия: v6.1 (Audit Cleanup).
+description: Sub-skill для работы с эпиками. Эпик - это направление или веха, в рамках которой PM достигает цели. Эпик является контейнером тасок или user stories, за счет которых выполняется эпик. Скилл активируется фасадом pm-copilot когда цель сформулирована и эпики определены. 4 фазы: выбор эпика → сбор юзер стори → сохранение → выбор таски. Цикл epic ⇄ task для прохода по таскам. Версия: v7.0 (Memory Refactor).
 ---
 
 # Контейнер тасок эпика
@@ -60,7 +60,7 @@ description: Sub-skill для работы с эпиками. Эпик - это 
 
 ## Фаза 3: Сохранение и приоритизация
 
-Сохранить все собранные таски в `goals[active].epics[active].tasks[]` ProductState:
+Сохранить все собранные таски в epic-файл (`~/pm-copilot/epics/[slug].md`, frontmatter `stories[]`):
 
 ```yaml
 tasks:
@@ -107,7 +107,7 @@ PM работает с эпиком "[epic.title]" цели "[goal.text]":
 
 ## Цикл: возврат после завершения таски
 
-Когда PRD утверждён (active_prd.status = approved) и PM возвращается в epic:
+Когда PRD утверждён (story status: approved) и PM возвращается в epic:
 
 1. Отметить текущую таску `status: done`, `prd_id: [id]`
 2. Показать статус эпика:
@@ -123,7 +123,7 @@ PM работает с эпиком "[epic.title]" цели "[goal.text]":
 ```
 
 3. При выборе [1] — установить следующую таску как `active_task_id`, `status: in_progress` → перейти в pm-copilot-task
-4. При выборе [2] — сохранить ProductState, показать `Этап: epic (приостановлен)`
+4. При выборе [2] — сохранить epic-файл, показать `Этап: epic (приостановлен)`
 
 ## Завершение эпика
 
@@ -151,27 +151,20 @@ PM работает с эпиком "[epic.title]" цели "[goal.text]":
 
 При `phase_turns > 3` без сохранения тасок — Anti-Overthinking Guard.
 
-## Чтение ProductState
+## Чтение файлов
+
+Ссылка на схему: `pm-copilot/references/product-state.md`
 
 Этот скилл читает:
-- `goals[]` — активная цель с эпиками
-- `goals[].active_epic_id` — текущий эпик
-- `goals[].epics[].tasks[]` — таски эпика
-- `metrics.tsar_metric` — для привязки тасок к царь-метрике
-- `product_memory.learned_patterns[]` — для рекомендаций при генерации
+- Goal-файл (`~/pm-copilot/goals/[slug].md`) — frontmatter: `epics[]` (список эпиков цели), `tsar_metric`
+- Epic-файл (`~/pm-copilot/epics/[slug].md`) — frontmatter: `stories[]` (таски/сторис эпика), `status`
+- Profile (`~/pm-copilot/profile.md`) — frontmatter: `metrics` для привязки к царь-метрике
 
-## Запись ProductState
+## Запись файлов
 
 Этот скилл пишет:
-- `goals[].active_epic_id` — при выборе эпика
-- `goals[].epics[].tasks[]` — при сборе тасок
-- `goals[].epics[].active_task_id` — при выборе таски
-- `goals[].epics[].tasks[].status` — при изменении статуса
-- `stage` — обновляет на `epic` при входе, на `task` при передаче
-- `path` — устанавливает `main`
-- `history[]` — добавляет запись при переходе
-- `last_context` — обновляет skill=epic, phase, timestamp
-- `updated` — обновляет timestamp
+- Создаёт/обновляет `~/pm-copilot/epics/[slug].md` (frontmatter + body) — при сборе тасок, выборе таски, изменении статуса
+- Обновляет `epics[]` в goal-файле (`~/pm-copilot/goals/[slug].md`) — при смене active_epic, статуса эпика
 
 ## Переключение
 

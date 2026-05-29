@@ -1,7 +1,7 @@
 # PM Copilot — Бэклог развития
 
-> Текущая версия: v6.2 (PERF Cleanup)
-> Последнее обновление: 2026-05-27
+> Текущая версия: v7.0 (Memory Refactor)
+> Последнее обновление: 2026-05-29
 > Режим тестирования: Lite (T1 каждый спринт, T2/T3 каждые 3 спринта)
 > Changelog: [pm-copilot-changelog.md](pm-copilot-changelog.md)
 

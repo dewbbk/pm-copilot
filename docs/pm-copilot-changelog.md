@@ -4,6 +4,24 @@
 
 ---
 
+## v7.0 — Memory Refactor (2026-05-29)
+
+**Что сделали:**
+- **Архитектура**: монолитный ProductState заменён на file-per-entity (1 цель = 1 файл, 1 эпик = 1 файл)
+- **Формат**: MD + YAML frontmatter — LLM парсит frontmatter, PM читает body (Obsidian-совместимо)
+- **ID**: slug-based (onboarding-activation) вместо timestamp (initiative-2026-05-11-1430)
+- **Dual-write**: при обновлении меняются frontmatter и body одновременно
+- **Router**: определение этапа по файлам и статусам, не по отдельному полю stage
+- **Удалено**: Decision Log, History, Archive, Product Memory, Compaction, timestamp IDs, 4-слойная загрузка памяти
+- **Файлы**: `~/pm-copilot/profile.md`, `goals/[slug].md`, `epics/[slug].md`
+- **Тесты**: переписаны под новую архитектуру (15 тестов: R6 + F5 + H4)
+
+**Изменённые файлы:** pm-copilot/SKILL.md, pm-copilot-onboarding/SKILL.md, pm-copilot-goal/SKILL.md, pm-copilot-epic/SKILL.md, pm-copilot-task/SKILL.md, pm-copilot-hypothesis/SKILL.md, pm-copilot-comms/SKILL.md, pm-copilot-post-launch/SKILL.md, pm-copilot-thinking-in-bets/SKILL.md, pm-copilot-tests/SKILL.md, pm-copilot/references/product-state.md, pm-copilot-comms/references/review-request.md, pm-copilot-comms/references/feedback-integration.md, README.md, docs/pm-copilot-backlog.md, docs/pm-copilot-changelog.md
+
+**Удалённые файлы:** pm-copilot/references/decision-log.md
+
+---
+
 ## v6.2 — PERF Cleanup (2026-05-27)
 
 **Что сделали:**
