@@ -4,6 +4,17 @@
 
 ---
 
+## v7.1 — Onboarding UX Quick Wins (2026-05-29)
+
+**Что сделали:**
+- **ONBOARDING-6**: Убран вопрос 4.5 про autopilot — autopilot=true по умолчанию, без вопроса. Команда `autopilot off` остаётся
+- **ONBOARDING-5**: Добавлен bridge от онбординга к действию — после сохранения профиля PM сразу переходит к созданию первой цели
+- **Отменено**: ONBOARDING-4 (настройки после опыта) — settings калибруют pipeline, убирать их из онбординга нельзя
+
+**Изменённые файлы:** pm-copilot-onboarding/SKILL.md, README.md
+
+---
+
 ## v7.0 — Memory Refactor (2026-05-29)
 
 **Что сделали:**
