@@ -4,7 +4,7 @@ set -e
 
 REPO_URL="https://github.com/dewbbk/pm-copilot.git"
 INSTALL_DIR="$HOME/.claude/skills"
-REPO_DIR="$HOME/.pm-copilot-repo"
+REPO_DIR="$HOME/pm-copilot-repo"
 
 echo "PM Copilot — установка/обновление"
 echo "=================================="
